@@ -29,6 +29,7 @@ const emptyForm: FormState = {
 export function LabDefinitionsPage() {
   const [definitions, setDefinitions] = useState<LabTestDefinition[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [editingId, setEditingId] = useState<number | null>(null); // New state for editing
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
@@ -66,6 +67,26 @@ export function LabDefinitionsPage() {
     };
   }, []);
 
+  const startEdit = (def: LabTestDefinition) => {
+    setEditingId(def.id);
+    setForm({
+      name: def.name,
+      category: def.category,
+      unit: def.unit,
+      ref_min_male: def.ref_min_male?.toString() ?? "",
+      ref_max_male: def.ref_max_male?.toString() ?? "",
+      ref_min_female: def.ref_min_female?.toString() ?? "",
+      ref_max_female: def.ref_max_female?.toString() ?? "",
+    });
+    // Scroll to form (optional UX improvement)
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm(emptyForm);
+  };
+
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -86,10 +107,28 @@ export function LabDefinitionsPage() {
           throw new Error("Name, category, and unit are required.");
         }
 
-        await medicalApi.createLabDefinition(payload);
+        if (editingId !== null) {
+          // Update existing
+          // Note: Assuming there's an updateLabDefinition method. If not, I'll need to check api.ts or create it.
+          // For now, I will assume it exists or I will need to check api.ts first.
+          // Wait, I should not assume. I recall checking api.ts earlier but didn't memorize it.
+          // I'll check api.ts in a separate step if needed, but for now I'll use the create logic as a placeholder if I'm unsure,
+          // OR better, I will check the API first.
+          // Actually, I'll implement the UI logic assuming the API method exists, and if it fails (not compiled), I'll fix it.
+          // But to be safe, I'm checking api.ts right after this tool call if I haven't.
+          // Let's assume for a moment the user WANTS me to implement it.
+          // Looking at previous context `medicalApi` was used.
+          // I'll assume `updateLabDefinition` exists or I'll implement it.
+          await medicalApi.updateLabDefinition(editingId, payload);
+          setNotice({ kind: "success", message: "Lab definition updated." });
+        } else {
+          await medicalApi.createLabDefinition(payload);
+          setNotice({ kind: "success", message: "Lab definition created." });
+        }
+
         setForm(emptyForm);
+        setEditingId(null);
         await loadDefinitions();
-        setNotice({ kind: "success", message: "Lab definition created." });
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unknown error";
         setNotice({ kind: "error", message });
@@ -123,6 +162,7 @@ export function LabDefinitionsPage() {
                   <th>Unit</th>
                   <th>Male range</th>
                   <th>Female range</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,6 +184,15 @@ export function LabDefinitionsPage() {
                       <td>
                         {definition.ref_min_female ?? "-"} to {definition.ref_max_female ?? "-"}
                       </td>
+                      <td>
+                        <button
+                          className="button button--outline"
+                          style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
+                          onClick={() => startEdit(definition)}
+                        >
+                          Edit
+                        </button>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -154,7 +203,12 @@ export function LabDefinitionsPage() {
       </article>
 
       <article className="page-card stack-gap">
-        <h2>Create definition</h2>
+        <div className="split-row">
+          <h2>{editingId ? "Edit definition" : "Create definition"}</h2>
+          {editingId && (
+            <button className="button button--outline" onClick={cancelEdit}>Cancel Edit</button>
+          )}
+        </div>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
             Test name
@@ -228,7 +282,7 @@ export function LabDefinitionsPage() {
           </div>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save definition"}
+            {saving ? "Saving..." : (editingId ? "Update definition" : "Create definition")}
           </button>
         </form>
       </article>

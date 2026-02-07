@@ -64,6 +64,8 @@ export const medicalApi = {
     request<LabTestDefinition[]>(`/lab-definitions/?skip=${skip}&limit=${limit}`),
   createLabDefinition: (payload: LabTestDefinitionCreate) =>
     request<LabTestDefinition>("/lab-definitions/", "POST", payload),
+  updateLabDefinition: (id: number, payload: LabTestDefinitionCreate) =>
+    request<LabTestDefinition>(`/lab-definitions/${id}`, "PUT", payload),
 
   createLabResult: (payload: LabResultCreate) => request<LabResult>("/lab-results/", "POST", payload),
   listPatientLabResults: (patientId: number) => request<LabResult[]>(`/patients/${patientId}/lab-results/`),

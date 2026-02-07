@@ -1,5 +1,5 @@
 ﻿import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { ShellLayout } from "./layout/ShellLayout";
+import { SidebarLayout } from "./layout/SidebarLayout";
 import { LabDefinitionsPage } from "./pages/LabDefinitionsPage";
 import { PatientAnthropometryPage } from "./pages/PatientAnthropometryPage";
 import { PatientBioimpedancePage } from "./pages/PatientBioimpedancePage";
@@ -12,7 +12,7 @@ import { PatientSubjectivePage } from "./pages/PatientSubjectivePage";
 function App() {
   return (
     <BrowserRouter>
-      <ShellLayout>
+      <SidebarLayout>
         <Routes>
           <Route path="/" element={<Navigate to="/patients" replace />} />
           <Route path="/patients" element={<PatientsPage />} />
@@ -29,7 +29,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/patients" replace />} />
         </Routes>
-      </ShellLayout>
+      </SidebarLayout>
     </BrowserRouter>
   );
 }

@@ -86,16 +86,22 @@ export function PatientRouteLayout() {
   const age = calculateAge(patient.date_of_birth);
 
   return (
-    <section className="stack-gap">
-      <article className="page-card">
-        <div className="patient-header">
+    <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div>
+        <button
+          onClick={() => navigate("/patients")}
+          style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.25rem", padding: "0" }}
+        >
+          &larr; Back to patients
+        </button>
+        <div className="patient-header" style={{ marginTop: "1rem" }}>
           <div>
-            <h2>{patient.full_name}</h2>
-            <p className="muted-text">
-              ID {patient.id} | {age === null ? "Age n/a" : `${age} years`} | {patient.gender} | {patient.height_cm} cm
+            <h1 style={{ marginBottom: "0.5rem" }}>{patient.full_name}</h1>
+            <p className="muted-text" style={{ fontSize: "1rem" }}>
+              ID #{patient.id} &bull; {age === null ? "Age n/a" : `${age} years old`} &bull; {patient.gender} &bull; {patient.height_cm} cm
             </p>
           </div>
-          <div className="muted-text">Created at: {formatDateTime(patient.created_at)}</div>
+          <div className="muted-text">Created: {formatDateTime(patient.created_at)}</div>
         </div>
 
         <div className="sub-nav">
@@ -103,15 +109,15 @@ export function PatientRouteLayout() {
             <NavLink
               key={item.path}
               to={item.path}
-              className={({ isActive }) => `pill-link ${isActive ? "pill-link--active" : ""}`}
+              className={({ isActive }) => `tab-link ${isActive ? "active" : ""}`}
             >
               {item.label}
             </NavLink>
           ))}
         </div>
-      </article>
+      </div>
 
       <Outlet context={{ patientId, patient, refreshPatient } satisfies PatientRouteContext} />
-    </section>
+    </div>
   );
 }

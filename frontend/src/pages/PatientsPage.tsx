@@ -3,7 +3,8 @@ import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
-import { parseRequiredNumber } from "../helpers";
+import { Modal } from "../components/common/Modal";
+import { parseRequiredNumber, calculateAge } from "../helpers";
 import type { Notice } from "../helpers";
 import type { Patient, PatientCreate, PatientUpdate } from "../types";
 
@@ -30,7 +31,9 @@ export function PatientsPage() {
   const [notice, setNotice] = useState<Notice | null>(null);
   const [action, setAction] = useState<string | null>(null);
 
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState<PatientFormState>(emptyForm);
+
   const [editPatientId, setEditPatientId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<PatientFormState>(emptyForm);
 
@@ -91,6 +94,11 @@ export function PatientsPage() {
     });
   };
 
+  const closeEdit = () => {
+    setEditPatientId(null);
+    setEditForm(emptyForm);
+  };
+
   const runAction = async (name: string, work: () => Promise<void>) => {
     setAction(name);
     try {
@@ -118,8 +126,9 @@ export function PatientsPage() {
 
       await medicalApi.createPatient(payload);
       setCreateForm(emptyForm);
+      setIsCreateOpen(false);
       await loadPatients();
-      setNotice({ kind: "success", message: "Patient created." });
+      setNotice({ kind: "success", message: "Patient created successfully." });
     });
   };
 
@@ -138,7 +147,8 @@ export function PatientsPage() {
       };
       await medicalApi.updatePatient(editPatientId, payload);
       await loadPatients();
-      setNotice({ kind: "success", message: "Patient updated." });
+      closeEdit();
+      setNotice({ kind: "success", message: "Patient updated successfully." });
     });
   };
 
@@ -156,93 +166,157 @@ export function PatientsPage() {
   };
 
   return (
-    <section className="grid-two stack-gap">
-      <article className="page-card stack-gap">
+    <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <header className="split-row" style={{ paddingBottom: "1.5rem", borderBottom: "1px solid var(--border)" }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Patients</h1>
+          <p className="muted-text">Manage your patient records and access medical history.</p>
+        </div>
+        <div className="row-gap">
+          <button
+            className="button button--primary"
+            onClick={() => setIsCreateOpen(true)}
+            style={{ height: "48px", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
+          >
+            <span style={{ marginRight: "0.5rem", fontSize: "1.2rem" }}>+</span> New Patient
+          </button>
+        </div>
+      </header>
+
+      <NoticeBanner notice={notice} />
+
+      <div className="page-card stack-gap">
         <div className="split-row">
-          <h2>Patients</h2>
-          <span className="muted-text">{patients.length} total</span>
+          <input
+            className="input"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search patients..."
+            style={{ maxWidth: "320px" }}
+          />
+          <div className="muted-text">
+            {filteredPatients.length} records
+          </div>
         </div>
 
-        <NoticeBanner notice={notice} />
-
-        <input
-          className="input"
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Search by name"
-        />
-
         {loading ? (
-          <p className="muted-text">Loading list...</p>
+          <p className="muted-text">Loading...</p>
         ) : (
-          <div className="stack-gap">
-            {filteredPatients.length === 0 ? (
-              <p className="muted-text">No patients found.</p>
-            ) : (
-              filteredPatients.map((patient) => (
-                <div key={patient.id} className="list-item">
-                  <div>
-                    <strong>{patient.full_name}</strong>
-                    <p className="muted-text">
-                      ID {patient.id} | DOB {patient.date_of_birth} | {patient.gender}
-                    </p>
-                  </div>
-                  <div className="button-row">
-                    <button
-                      type="button"
-                      className="button button--outline"
-                      onClick={() => navigate(`/patients/${patient.id}/dashboard`)}
-                    >
-                      Open
-                    </button>
-                    <button type="button" className="button button--outline" onClick={() => startEdit(patient)}>
-                      Edit
-                    </button>
-                    <button type="button" className="button button--danger" onClick={() => onDeletePatient(patient)}>
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>ID</th>
+                  <th>Age/DOB</th>
+                  <th>Gender</th>
+                  <th>Height</th>
+                  <th style={{ textAlign: "right" }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPatients.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="empty-cell" style={{ padding: "2rem" }}>
+                      No patients found.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredPatients.map((patient) => {
+                    const age = calculateAge(patient.date_of_birth);
+                    return (
+                      <tr key={patient.id}>
+                        <td>
+                          <strong>{patient.full_name}</strong>
+                        </td>
+                        <td className="muted-text">#{patient.id}</td>
+                        <td>
+                          {age !== null ? `${age} yrs` : "N/A"}{" "}
+                          <span className="muted-text" style={{ fontSize: "0.8em" }}>
+                            ({patient.date_of_birth})
+                          </span>
+                        </td>
+                        <td>{patient.gender}</td>
+                        <td>{patient.height_cm} cm</td>
+                        <td style={{ textAlign: "right" }}>
+                          <div className="button-row" style={{ justifyContent: "flex-end" }}>
+                            <button
+                              type="button"
+                              className="button button--outline"
+                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              onClick={() => navigate(`/patients/${patient.id}/dashboard`)}
+                            >
+                              Open
+                            </button>
+                            <button
+                              type="button"
+                              className="button button--outline"
+                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              onClick={() => startEdit(patient)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              className="button button--danger"
+                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              onClick={() => onDeletePatient(patient)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         )}
-      </article>
+      </div>
 
-      <article className="page-card stack-gap">
-        <h2>Create patient</h2>
+      {/* CREATE MODAL */}
+      <Modal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title="Create New Patient"
+      >
         <form className="form-grid" onSubmit={onCreatePatient}>
           <label>
-            Full name
+            Full Name
             <input
               className="input"
               value={createForm.full_name}
               onChange={(event) => setCreateForm((current) => ({ ...current, full_name: event.target.value }))}
               required
+              placeholder="e.g. John Doe"
             />
           </label>
-          <label>
-            Date of birth
-            <input
-              className="input"
-              type="date"
-              value={createForm.date_of_birth}
-              onChange={(event) => setCreateForm((current) => ({ ...current, date_of_birth: event.target.value }))}
-              required
-            />
-          </label>
-          <label>
-            Gender
-            <select
-              className="input"
-              value={createForm.gender}
-              onChange={(event) => setCreateForm((current) => ({ ...current, gender: event.target.value }))}
-            >
-              <option value="Feminino">Feminino</option>
-              <option value="Masculino">Masculino</option>
-              <option value="Outro">Outro</option>
-            </select>
-          </label>
+          <div className="grid-two">
+            <label>
+              Date of Birth
+              <input
+                className="input"
+                type="date"
+                value={createForm.date_of_birth}
+                onChange={(event) => setCreateForm((current) => ({ ...current, date_of_birth: event.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Gender
+              <select
+                className="input"
+                value={createForm.gender}
+                onChange={(event) => setCreateForm((current) => ({ ...current, gender: event.target.value }))}
+              >
+                <option value="Feminino">Feminino</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+          </div>
           <label>
             Height (cm)
             <input
@@ -252,29 +326,39 @@ export function PatientsPage() {
               value={createForm.height_cm}
               onChange={(event) => setCreateForm((current) => ({ ...current, height_cm: event.target.value }))}
               required
+              placeholder="e.g. 175"
             />
           </label>
-          <button className="button button--primary" type="submit" disabled={action === "create-patient"}>
-            {action === "create-patient" ? "Saving..." : "Save patient"}
-          </button>
+          <div className="split-row" style={{ marginTop: "1rem" }}>
+            <button type="button" className="button button--outline" onClick={() => setIsCreateOpen(false)}>
+              Cancel
+            </button>
+            <button className="button button--primary" type="submit" disabled={action === "create-patient"}>
+              {action === "create-patient" ? "Creating..." : "Create Patient"}
+            </button>
+          </div>
         </form>
+      </Modal>
 
-        <h2>Edit selected patient</h2>
-        {editPatientId === null ? (
-          <p className="muted-text">Choose one patient and click Edit to load this form.</p>
-        ) : (
-          <form className="form-grid" onSubmit={onUpdatePatient}>
+      {/* EDIT MODAL */}
+      <Modal
+        isOpen={editPatientId !== null}
+        onClose={closeEdit}
+        title="Edit Patient"
+      >
+        <form className="form-grid" onSubmit={onUpdatePatient}>
+          <label>
+            Full Name
+            <input
+              className="input"
+              value={editForm.full_name}
+              onChange={(event) => setEditForm((current) => ({ ...current, full_name: event.target.value }))}
+              required
+            />
+          </label>
+          <div className="grid-two">
             <label>
-              Full name
-              <input
-                className="input"
-                value={editForm.full_name}
-                onChange={(event) => setEditForm((current) => ({ ...current, full_name: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              Date of birth
+              Date of Birth
               <input
                 className="input"
                 type="date"
@@ -295,24 +379,29 @@ export function PatientsPage() {
                 <option value="Outro">Outro</option>
               </select>
             </label>
-            <label>
-              Height (cm)
-              <input
-                className="input"
-                type="number"
-                step="0.1"
-                value={editForm.height_cm}
-                onChange={(event) => setEditForm((current) => ({ ...current, height_cm: event.target.value }))}
-                required
-              />
-            </label>
-            <button className="button button--primary" type="submit" disabled={action === "update-patient"}>
-              {action === "update-patient" ? "Saving..." : "Update patient"}
+          </div>
+          <label>
+            Height (cm)
+            <input
+              className="input"
+              type="number"
+              step="0.1"
+              value={editForm.height_cm}
+              onChange={(event) => setEditForm((current) => ({ ...current, height_cm: event.target.value }))}
+              required
+            />
+          </label>
+          <div className="split-row" style={{ marginTop: "1rem" }}>
+            <button type="button" className="button button--outline" onClick={closeEdit}>
+              Cancel
             </button>
-          </form>
-        )}
-      </article>
-    </section>
+            <button className="button button--primary" type="submit" disabled={action === "update-patient"}>
+              {action === "update-patient" ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </div>
   );
 }
 

@@ -2,6 +2,8 @@
 import { useOutletContext } from "react-router-dom";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
+import { EvolutionChart } from "../components/dashboard/EvolutionChart";
+import { LabAlerts } from "../components/dashboard/LabAlerts";
 import { formatDate, formatOptional } from "../helpers";
 import type { Notice } from "../helpers";
 import type {
@@ -28,7 +30,7 @@ const emptyData: DashboardData = {
 };
 
 export function PatientDashboardPage() {
-  const { patientId } = useOutletContext<PatientRouteContext>();
+  const { patientId, patient } = useOutletContext<PatientRouteContext>();
 
   const [definitions, setDefinitions] = useState<LabTestDefinition[]>([]);
   const [data, setData] = useState<DashboardData>(emptyData);
@@ -96,16 +98,34 @@ export function PatientDashboardPage() {
     [data.subjectiveEntries],
   );
 
-  const latestLab = sortedLabs[0] ?? null;
   const latestBio = sortedBio[0] ?? null;
   const latestAnthro = sortedAnthro[0] ?? null;
-  const latestSubjective = sortedSubjective[0] ?? null;
+
+  // Prepare chart data
+  const weightData = useMemo(() => {
+    return data.bioimpedanceEntries.map((entry) => ({
+      date: entry.date,
+      weight: entry.weight_kg,
+      muscle: entry.muscle_mass_kg,
+      fat: entry.fat_mass_kg,
+    }));
+  }, [data.bioimpedanceEntries]);
+
+  const compositionData = useMemo(() => {
+    return data.bioimpedanceEntries.map((entry) => ({
+      date: entry.date,
+      fat_percent: entry.body_fat_percent,
+      hydration: entry.hydration_percent ?? 0,
+    }));
+  }, [data.bioimpedanceEntries]);
 
   return (
-    <article className="page-card stack-gap">
+    <div className="stack-gap">
       <div className="split-row">
-        <h3>Patient dashboard</h3>
-        <span className="muted-text">Overview of all domains</span>
+        <div>
+          <h3>Overview</h3>
+          <p className="muted-text">Key metrics and alerts</p>
+        </div>
       </div>
 
       <NoticeBanner notice={notice} />
@@ -116,98 +136,123 @@ export function PatientDashboardPage() {
         <>
           <section className="metric-grid">
             <div className="metric-card">
-              <h4>Latest weight</h4>
+              <h4>Weight</h4>
               <strong>{latestBio ? `${latestBio.weight_kg} kg` : "-"}</strong>
-              <span>Body fat: {latestBio ? `${latestBio.body_fat_percent}%` : "-"}</span>
+              <span>
+                {latestBio ? `BMI: ${latestBio.bmi.toFixed(1)}` : "No data"}
+              </span>
             </div>
             <div className="metric-card">
-              <h4>Latest waist</h4>
+              <h4>Body Fat</h4>
+              <strong>{latestBio ? `${latestBio.body_fat_percent}%` : "-"}</strong>
+              <span>
+                {latestBio ? `${latestBio.fat_mass_kg} kg fat` : "No data"}
+              </span>
+            </div>
+            <div className="metric-card">
+              <h4>Muscle Mass</h4>
+              <strong>{latestBio ? `${latestBio.muscle_mass_kg} kg` : "-"}</strong>
+              <span>Skeletal Muscle</span>
+            </div>
+            <div className="metric-card">
+              <h4>Waist</h4>
               <strong>{latestAnthro ? `${formatOptional(latestAnthro.waist_cm)} cm` : "-"}</strong>
-              <span>Date: {latestAnthro ? formatDate(latestAnthro.date) : "-"}</span>
-            </div>
-            <div className="metric-card">
-              <h4>Latest subjective score</h4>
-              <strong>{latestSubjective ? `${latestSubjective.metric_name}: ${latestSubjective.score}` : "-"}</strong>
-              <span>Date: {latestSubjective ? formatDate(latestSubjective.date) : "-"}</span>
-            </div>
-            <div className="metric-card">
-              <h4>Latest lab</h4>
-              <strong>
-                {latestLab
-                  ? `${definitionMap.get(latestLab.test_definition_id)?.name ?? "Test"}: ${latestLab.value}`
-                  : "-"}
-              </strong>
-              <span>Date: {latestLab ? formatDate(latestLab.collection_date) : "-"}</span>
+              <span>
+                {latestAnthro ? formatDate(latestAnthro.date) : "-"}
+              </span>
             </div>
           </section>
 
+          <LabAlerts results={data.labResults} definitions={definitions} patient={patient} />
+
           <section className="grid-two">
-            <div className="table-wrap">
-              <h4>Recent lab results</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Test</th>
-                    <th>Value</th>
-                    <th>Flag</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedLabs.length === 0 ? (
+            <EvolutionChart
+              title="Weight & Composition Evolution"
+              data={weightData}
+              lines={[
+                { key: "weight", color: "#111827", name: "Weight (kg)" },
+                { key: "muscle", color: "#c5a028", name: "Muscle (kg)" },
+              ]}
+            />
+            <EvolutionChart
+              title="Body Fat % Evolution"
+              data={compositionData}
+              lines={[
+                { key: "fat_percent", color: "#ef4444", name: "Body Fat %" },
+                { key: "hydration", color: "#3b82f6", name: "Hydration %" },
+              ]}
+            />
+          </section>
+
+          <section className="grid-two">
+            <div className="page-card stack-gap-sm">
+              <h4>Recent Lab Results</h4>
+              <div className="table-wrap" style={{ border: "none" }}>
+                <table>
+                  <thead>
                     <tr>
-                      <td colSpan={4} className="empty-cell">
-                        No lab results yet.
-                      </td>
+                      <th>Date</th>
+                      <th>Test</th>
+                      <th>Value</th>
+                      <th>Flag</th>
                     </tr>
-                  ) : (
-                    sortedLabs.slice(0, 6).map((result) => (
-                      <tr key={result.id}>
-                        <td>{formatDate(result.collection_date)}</td>
-                        <td>{definitionMap.get(result.test_definition_id)?.name ?? result.test_definition_id}</td>
-                        <td>{result.value}</td>
-                        <td>{result.flag ?? "-"}</td>
+                  </thead>
+                  <tbody>
+                    {sortedLabs.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="empty-cell">
+                          No lab results yet.
+                        </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      sortedLabs.slice(0, 5).map((result) => (
+                        <tr key={result.id}>
+                          <td>{formatDate(result.collection_date)}</td>
+                          <td>{definitionMap.get(result.test_definition_id)?.name ?? "Unknown"}</td>
+                          <td>{result.value}</td>
+                          <td>{result.flag ?? "-"}</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div className="table-wrap">
-              <h4>Recent subjective logs</h4>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Metric</th>
-                    <th>Score</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sortedSubjective.length === 0 ? (
+            <div className="page-card stack-gap-sm">
+              <h4>Subjective Logs</h4>
+              <div className="table-wrap" style={{ border: "none" }}>
+                <table>
+                  <thead>
                     <tr>
-                      <td colSpan={4} className="empty-cell">
-                        No subjective data yet.
-                      </td>
+                      <th>Date</th>
+                      <th>Metric</th>
+                      <th>Score</th>
                     </tr>
-                  ) : (
-                    sortedSubjective.slice(0, 6).map((entry) => (
-                      <tr key={entry.id}>
-                        <td>{formatDate(entry.date)}</td>
-                        <td>{entry.metric_name}</td>
-                        <td>{entry.score}</td>
-                        <td>{entry.notes ?? "-"}</td>
+                  </thead>
+                  <tbody>
+                    {sortedSubjective.length === 0 ? (
+                      <tr>
+                        <td colSpan={3} className="empty-cell">
+                          No subjective data yet.
+                        </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      sortedSubjective.slice(0, 5).map((entry) => (
+                        <tr key={entry.id}>
+                          <td>{formatDate(entry.date)}</td>
+                          <td>{entry.metric_name}</td>
+                          <td><strong>{entry.score}</strong>/10</td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         </>
       )}
-    </article>
+    </div>
   );
 }
