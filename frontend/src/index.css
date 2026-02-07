@@ -1,0 +1,351 @@
+﻿@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap");
+
+:root {
+  --bg: #f5f1e8;
+  --panel: #fffdf7;
+  --panel-soft: #fffaf0;
+  --text: #2d2212;
+  --muted: #6e624c;
+  --border: #e7d8bc;
+  --accent: #b8860b;
+  --accent-soft: #f2deaa;
+  --danger-bg: #f9e1dd;
+  --danger-border: #dba39b;
+  --danger-text: #8f2e25;
+  --shadow: 0 14px 36px rgba(42, 28, 9, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(186, 142, 18, 0.15), transparent 28%),
+    radial-gradient(circle at 92% 8%, rgba(255, 255, 255, 0.7), transparent 32%),
+    linear-gradient(175deg, var(--bg), #ece2cf);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+h1 {
+  font-size: clamp(1.5rem, 2.4vw, 2.3rem);
+}
+
+h2 {
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+}
+
+h3 {
+  font-size: 1.35rem;
+}
+
+h4 {
+  font-size: 1.05rem;
+}
+
+p {
+  margin: 0;
+}
+
+.app-shell {
+  width: min(1480px, 100%);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.topbar {
+  background: linear-gradient(145deg, var(--panel), #fff7e8);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.brand p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.brand__logo {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+.main-nav,
+.sub-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill-link {
+  text-decoration: none;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #fff;
+}
+
+.pill-link--active {
+  background: linear-gradient(145deg, var(--accent), #a77705);
+  border-color: #9a7004;
+  color: #fff;
+}
+
+.page-frame {
+  margin-top: 0.8rem;
+}
+
+.page-card {
+  background: linear-gradient(180deg, var(--panel), var(--panel-soft));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.stack-gap {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.metric-card {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.metric-card strong {
+  font-size: 1.1rem;
+}
+
+.metric-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.split-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.muted-text {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.notice {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 0.62rem 0.78rem;
+  font-size: 0.9rem;
+  background: #fff;
+}
+
+.notice--success {
+  border-color: #7ba885;
+  background: #e8f7ed;
+}
+
+.notice--error {
+  border-color: #cf8f87;
+  background: #fceae7;
+}
+
+.notice--info {
+  border-color: #aab2cc;
+  background: #edf1fb;
+}
+
+.list-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.62rem 0.72rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.56rem;
+}
+
+.form-grid label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem 0.56rem;
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.18);
+}
+
+.input--textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+
+.button {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 0.52rem 0.74rem;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.button--primary {
+  color: #fff;
+  background: linear-gradient(145deg, var(--accent), #a67504);
+}
+
+.button--outline {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.button--danger {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.45rem;
+  border-bottom: 1px solid #efe6d4;
+  white-space: nowrap;
+}
+
+th {
+  color: var(--muted);
+}
+
+.empty-cell {
+  color: var(--muted);
+  text-align: center;
+}
+
+@media (max-width: 1200px) {
+  .grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar,
+  .patient-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .main-nav {
+    width: 100%;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .list-item {
+    flex-direction: column;
+  }
+}
