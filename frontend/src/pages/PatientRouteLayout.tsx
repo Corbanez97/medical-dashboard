@@ -11,11 +11,11 @@ export type PatientRouteContext = {
 };
 
 const links = [
-  { path: "dashboard", label: "Dashboard" },
-  { path: "labs", label: "Lab results" },
-  { path: "bioimpedance", label: "Bioimpedance" },
-  { path: "anthropometry", label: "Anthropometry" },
-  { path: "subjective", label: "Subjective" },
+  { path: "dashboard", label: "Painel" },
+  { path: "labs", label: "Resultados de Exames" },
+  { path: "bioimpedance", label: "Bioimpedância" },
+  { path: "anthropometry", label: "Antropometria" },
+  { path: "subjective", label: "Subjetivo" },
 ];
 
 export function PatientRouteLayout() {
@@ -37,7 +37,7 @@ export function PatientRouteLayout() {
 
     const loadPatient = async () => {
       if (Number.isNaN(patientId)) {
-        setError("Invalid patient id in URL.");
+        setError("ID do paciente inválido na URL.");
         setLoading(false);
         return;
       }
@@ -54,8 +54,8 @@ export function PatientRouteLayout() {
         if (!active) {
           return;
         }
-        const message = loadError instanceof Error ? loadError.message : "Unknown error";
-        setError(`Could not load patient: ${message}`);
+        const message = loadError instanceof Error ? loadError.message : "Erro desconhecido";
+        setError(`Não foi possível carregar o paciente: ${message}`);
       } finally {
         if (active) {
           setLoading(false);
@@ -70,15 +70,15 @@ export function PatientRouteLayout() {
   }, [patientId]);
 
   if (loading) {
-    return <section className="page-card">Loading patient...</section>;
+    return <section className="page-card">Carregando paciente...</section>;
   }
 
   if (error || patient === null) {
     return (
       <section className="page-card stack-gap">
-        <h2>Patient not available</h2>
-        <p>{error ?? "Patient not found."}</p>
-        <button className="button button--outline" type="button" onClick={() => navigate("/patients")}>Back to patients</button>
+        <h2>Paciente não disponível</h2>
+        <p>{error ?? "Paciente não encontrado."}</p>
+        <button className="button button--outline" type="button" onClick={() => navigate("/patients")}>Voltar para pacientes</button>
       </section>
     );
   }
@@ -92,16 +92,16 @@ export function PatientRouteLayout() {
           onClick={() => navigate("/patients")}
           style={{ background: "none", border: "none", color: "var(--text-secondary)", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.25rem", padding: "0" }}
         >
-          &larr; Back to patients
+          &larr; Voltar para pacientes
         </button>
         <div className="patient-header" style={{ marginTop: "1rem" }}>
           <div>
             <h1 style={{ marginBottom: "0.5rem" }}>{patient.full_name}</h1>
             <p className="muted-text" style={{ fontSize: "1rem" }}>
-              ID #{patient.id} &bull; {age === null ? "Age n/a" : `${age} years old`} &bull; {patient.gender} &bull; {patient.height_cm} cm
+              ID #{patient.id} &bull; {age === null ? "Idade n/a" : `${age} anos`} &bull; {patient.gender} &bull; {patient.height_cm} cm
             </p>
           </div>
-          <div className="muted-text">Created: {formatDateTime(patient.created_at)}</div>
+          <div className="muted-text">Criado em: {formatDateTime(patient.created_at)}</div>
         </div>
 
         <div className="sub-nav">

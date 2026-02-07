@@ -62,8 +62,8 @@ export function PatientAnthropometryPage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load anthropometry data: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar dados de antropometria: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -86,21 +86,21 @@ export function PatientAnthropometryPage() {
         const payload: AnthropometryEntryCreate = {
           patient_id: patientId,
           date: form.date,
-          waist_cm: parseOptionalNumber(form.waist_cm, "Waist"),
-          abdomen_cm: parseOptionalNumber(form.abdomen_cm, "Abdomen"),
-          hips_cm: parseOptionalNumber(form.hips_cm, "Hips"),
-          right_arm_cm: parseOptionalNumber(form.right_arm_cm, "Right arm"),
-          left_arm_cm: parseOptionalNumber(form.left_arm_cm, "Left arm"),
-          right_thigh_cm: parseOptionalNumber(form.right_thigh_cm, "Right thigh"),
-          left_thigh_cm: parseOptionalNumber(form.left_thigh_cm, "Left thigh"),
+          waist_cm: parseOptionalNumber(form.waist_cm, "Cintura"),
+          abdomen_cm: parseOptionalNumber(form.abdomen_cm, "Abdômen"),
+          hips_cm: parseOptionalNumber(form.hips_cm, "Quadril"),
+          right_arm_cm: parseOptionalNumber(form.right_arm_cm, "Braço Direito"),
+          left_arm_cm: parseOptionalNumber(form.left_arm_cm, "Braço Esquerdo"),
+          right_thigh_cm: parseOptionalNumber(form.right_thigh_cm, "Coxa Direita"),
+          left_thigh_cm: parseOptionalNumber(form.left_thigh_cm, "Coxa Esquerda"),
         };
 
         await medicalApi.createAnthropometryEntry(payload);
         setForm(emptyForm);
         await loadEntries();
-        setNotice({ kind: "success", message: "Anthropometry entry saved." });
+        setNotice({ kind: "success", message: "Registro de antropometria salvo." });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setSaving(false);
@@ -114,32 +114,32 @@ export function PatientAnthropometryPage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h3>Anthropometry history</h3>
-          <span className="muted-text">{entries.length} records</span>
+          <h3>Histórico de Antropometria</h3>
+          <span className="muted-text">{entries.length} registros</span>
         </div>
 
         <NoticeBanner notice={notice} />
 
         {loading ? (
-          <p className="muted-text">Loading history...</p>
+          <p className="muted-text">Carregando histórico...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Waist</th>
-                  <th>Abdomen</th>
-                  <th>Hips</th>
-                  <th>Right arm</th>
-                  <th>Left arm</th>
+                  <th>Data</th>
+                  <th>Cintura</th>
+                  <th>Abdômen</th>
+                  <th>Quadril</th>
+                  <th>Braço Dir.</th>
+                  <th>Braço Esq.</th>
                 </tr>
               </thead>
               <tbody>
                 {sorted.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="empty-cell">
-                      No anthropometry records yet.
+                      Nenhum registro de antropometria ainda.
                     </td>
                   </tr>
                 ) : (
@@ -161,10 +161,10 @@ export function PatientAnthropometryPage() {
       </article>
 
       <article className="page-card stack-gap">
-        <h3>Add anthropometry entry</h3>
+        <h3>Adicionar registro de antropometria</h3>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
-            Date
+            Data
             <input
               className="input"
               type="date"
@@ -176,7 +176,7 @@ export function PatientAnthropometryPage() {
 
           <div className="grid-two">
             <label>
-              Waist (cm)
+              Cintura (cm)
               <input
                 className="input"
                 type="number"
@@ -186,7 +186,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Abdomen (cm)
+              Abdômen (cm)
               <input
                 className="input"
                 type="number"
@@ -196,7 +196,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Hips (cm)
+              Quadril (cm)
               <input
                 className="input"
                 type="number"
@@ -206,7 +206,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Right arm (cm)
+              Braço Dir. (cm)
               <input
                 className="input"
                 type="number"
@@ -216,7 +216,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Left arm (cm)
+              Braço Esq. (cm)
               <input
                 className="input"
                 type="number"
@@ -226,7 +226,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Right thigh (cm)
+              Coxa Dir. (cm)
               <input
                 className="input"
                 type="number"
@@ -236,7 +236,7 @@ export function PatientAnthropometryPage() {
               />
             </label>
             <label>
-              Left thigh (cm)
+              Coxa Esq. (cm)
               <input
                 className="input"
                 type="number"
@@ -248,7 +248,7 @@ export function PatientAnthropometryPage() {
           </div>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save anthropometry"}
+            {saving ? "Salvando..." : "Salvar Antropometria"}
           </button>
         </form>
       </article>

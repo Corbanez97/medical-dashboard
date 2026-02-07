@@ -59,17 +59,17 @@ export function LabAlerts({ results, definitions, patient }: Props) {
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
-                <h4 style={{ color: "var(--danger)" }}>Abnormal Lab Results ({alerts.length})</h4>
+                <h4 style={{ color: "var(--danger)" }}>Resultados de Exames Anormais ({alerts.length})</h4>
             </div>
 
             <div className="table-wrap">
                 <table style={{ background: "transparent" }}>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Test</th>
-                            <th>Value</th>
-                            <th>Reference</th>
+                            <th>Data</th>
+                            <th>Exame</th>
+                            <th>Valor</th>
+                            <th>Referência</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,7 +82,7 @@ export function LabAlerts({ results, definitions, patient }: Props) {
                             return (
                                 <tr key={result.id}>
                                     <td>{formatDate(result.collection_date)}</td>
-                                    <td><strong>{def?.name ?? "Unknown"}</strong></td>
+                                    <td><strong>{def?.name ?? "Desconhecido"}</strong></td>
                                     <td style={{ color: "var(--danger)", fontWeight: 600 }}>{result.value} {def?.unit}</td>
                                     <td className="muted-text">
                                         {min !== null ? min : "?"} - {max !== null ? max : "?"}
@@ -95,7 +95,7 @@ export function LabAlerts({ results, definitions, patient }: Props) {
             </div>
             {alerts.length > 5 && (
                 <p className="muted-text" style={{ fontSize: "0.85rem", textAlign: "center" }}>
-                    + {alerts.length - 5} more alerts
+                    + {alerts.length - 5} mais alertas
                 </p>
             )}
         </div>

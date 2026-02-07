@@ -52,8 +52,8 @@ export function LabDefinitionsPage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load definitions: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar definições: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -97,40 +97,29 @@ export function LabDefinitionsPage() {
           name: form.name.trim(),
           category: form.category.trim(),
           unit: form.unit.trim(),
-          ref_min_male: parseOptionalNumber(form.ref_min_male, "Male min"),
-          ref_max_male: parseOptionalNumber(form.ref_max_male, "Male max"),
-          ref_min_female: parseOptionalNumber(form.ref_min_female, "Female min"),
-          ref_max_female: parseOptionalNumber(form.ref_max_female, "Female max"),
+          ref_min_male: parseOptionalNumber(form.ref_min_male, "Mín. Masculino"),
+          ref_max_male: parseOptionalNumber(form.ref_max_male, "Máx. Masculino"),
+          ref_min_female: parseOptionalNumber(form.ref_min_female, "Mín. Feminino"),
+          ref_max_female: parseOptionalNumber(form.ref_max_female, "Máx. Feminino"),
         };
 
         if (!payload.name || !payload.category || !payload.unit) {
-          throw new Error("Name, category, and unit are required.");
+          throw new Error("Nome, categoria e unidade são obrigatórios.");
         }
 
         if (editingId !== null) {
-          // Update existing
-          // Note: Assuming there's an updateLabDefinition method. If not, I'll need to check api.ts or create it.
-          // For now, I will assume it exists or I will need to check api.ts first.
-          // Wait, I should not assume. I recall checking api.ts earlier but didn't memorize it.
-          // I'll check api.ts in a separate step if needed, but for now I'll use the create logic as a placeholder if I'm unsure,
-          // OR better, I will check the API first.
-          // Actually, I'll implement the UI logic assuming the API method exists, and if it fails (not compiled), I'll fix it.
-          // But to be safe, I'm checking api.ts right after this tool call if I haven't.
-          // Let's assume for a moment the user WANTS me to implement it.
-          // Looking at previous context `medicalApi` was used.
-          // I'll assume `updateLabDefinition` exists or I'll implement it.
           await medicalApi.updateLabDefinition(editingId, payload);
-          setNotice({ kind: "success", message: "Lab definition updated." });
+          setNotice({ kind: "success", message: "Definição atualizada." });
         } else {
           await medicalApi.createLabDefinition(payload);
-          setNotice({ kind: "success", message: "Lab definition created." });
+          setNotice({ kind: "success", message: "Definição criada." });
         }
 
         setForm(emptyForm);
         setEditingId(null);
         await loadDefinitions();
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setSaving(false);
@@ -144,32 +133,32 @@ export function LabDefinitionsPage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h2>Lab definitions</h2>
-          <span className="muted-text">{definitions.length} items</span>
+          <h2>Definições de Exames</h2>
+          <span className="muted-text">{definitions.length} itens</span>
         </div>
 
         <NoticeBanner notice={notice} />
 
         {loading ? (
-          <p className="muted-text">Loading definitions...</p>
+          <p className="muted-text">Carregando definições...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Unit</th>
-                  <th>Male range</th>
-                  <th>Female range</th>
-                  <th>Action</th>
+                  <th>Nome</th>
+                  <th>Categoria</th>
+                  <th>Unidade</th>
+                  <th>Ref. Masculino</th>
+                  <th>Ref. Feminino</th>
+                  <th>Ação</th>
                 </tr>
               </thead>
               <tbody>
                 {definitions.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="empty-cell">
-                      No definitions yet.
+                    <td colSpan={6} className="empty-cell">
+                      Nenhuma definição ainda.
                     </td>
                   </tr>
                 ) : (
@@ -179,10 +168,10 @@ export function LabDefinitionsPage() {
                       <td>{definition.category}</td>
                       <td>{definition.unit}</td>
                       <td>
-                        {definition.ref_min_male ?? "-"} to {definition.ref_max_male ?? "-"}
+                        {definition.ref_min_male ?? "-"} a {definition.ref_max_male ?? "-"}
                       </td>
                       <td>
-                        {definition.ref_min_female ?? "-"} to {definition.ref_max_female ?? "-"}
+                        {definition.ref_min_female ?? "-"} a {definition.ref_max_female ?? "-"}
                       </td>
                       <td>
                         <button
@@ -190,7 +179,7 @@ export function LabDefinitionsPage() {
                           style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
                           onClick={() => startEdit(definition)}
                         >
-                          Edit
+                          Editar
                         </button>
                       </td>
                     </tr>
@@ -204,14 +193,14 @@ export function LabDefinitionsPage() {
 
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h2>{editingId ? "Edit definition" : "Create definition"}</h2>
+          <h2>{editingId ? "Editar Definição" : "Criar Definição"}</h2>
           {editingId && (
-            <button className="button button--outline" onClick={cancelEdit}>Cancel Edit</button>
+            <button className="button button--outline" onClick={cancelEdit}>Cancelar Edição</button>
           )}
         </div>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
-            Test name
+            Nome do Exame
             <input
               className="input"
               value={form.name}
@@ -220,7 +209,7 @@ export function LabDefinitionsPage() {
             />
           </label>
           <label>
-            Category
+            Categoria
             <input
               className="input"
               value={form.category}
@@ -229,7 +218,7 @@ export function LabDefinitionsPage() {
             />
           </label>
           <label>
-            Unit
+            Unidade
             <input
               className="input"
               value={form.unit}
@@ -240,7 +229,7 @@ export function LabDefinitionsPage() {
 
           <div className="grid-two">
             <label>
-              Male min
+              Mín. Masculino
               <input
                 className="input"
                 type="number"
@@ -250,7 +239,7 @@ export function LabDefinitionsPage() {
               />
             </label>
             <label>
-              Male max
+              Máx. Masculino
               <input
                 className="input"
                 type="number"
@@ -260,7 +249,7 @@ export function LabDefinitionsPage() {
               />
             </label>
             <label>
-              Female min
+              Mín. Feminino
               <input
                 className="input"
                 type="number"
@@ -270,7 +259,7 @@ export function LabDefinitionsPage() {
               />
             </label>
             <label>
-              Female max
+              Máx. Feminino
               <input
                 className="input"
                 type="number"
@@ -282,7 +271,7 @@ export function LabDefinitionsPage() {
           </div>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : (editingId ? "Update definition" : "Create definition")}
+            {saving ? "Salvando..." : (editingId ? "Atualizar Definição" : "Criar Definição")}
           </button>
         </form>
       </article>

@@ -406,23 +406,78 @@ tr:hover td {
   color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1.5rem;
   flex-shrink: 0;
   border-right: 1px solid rgba(184, 134, 11, 0.2);
+  transition: width 0.3s ease;
+  overflow: hidden;
+  position: fixed;
+  /* Fix sidebar to left */
+  height: 100vh;
+  z-index: 100;
+}
+
+.sidebar.collapsed {
+  width: 80px;
+  padding: 1.5rem 1rem;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  min-height: 89px;
+  /* Preserve height to match non-collapsed */
 }
 
 .sidebar-logo {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 3rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sidebar.collapsed .sidebar-logo {
+  justify-content: center;
+  width: 100%;
+}
+
+.sidebar-toggle {
+  background: transparent;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  width: 100%;
 }
 
 .sidebar-logo img {
   width: 48px;
   height: 48px;
+  flex-shrink: 0;
 }
 
 .sidebar-nav {
@@ -443,6 +498,13 @@ tr:hover td {
   font-size: 0.95rem;
   transition: all 0.2s;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 .nav-item:hover {

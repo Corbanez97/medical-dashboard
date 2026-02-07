@@ -70,8 +70,8 @@ export function PatientLabsPage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load lab data: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar dados de exames: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -93,23 +93,23 @@ export function PatientLabsPage() {
       try {
         const definitionId = Number.parseInt(form.test_definition_id, 10);
         if (Number.isNaN(definitionId)) {
-          throw new Error("Select one lab definition.");
+          throw new Error("Selecione uma definição de exame.");
         }
 
         const payload: LabResultCreate = {
           patient_id: patientId,
           test_definition_id: definitionId,
           collection_date: form.collection_date,
-          value: parseRequiredNumber(form.value, "Value"),
+          value: parseRequiredNumber(form.value, "Valor"),
           flag: form.flag.trim() || null,
         };
 
         await medicalApi.createLabResult(payload);
         setForm(emptyForm);
         await loadData();
-        setNotice({ kind: "success", message: "Lab result saved." });
+        setNotice({ kind: "success", message: "Resultado salvo." });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setSaving(false);
@@ -123,30 +123,30 @@ export function PatientLabsPage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h3>Lab results</h3>
-          <span className="muted-text">{results.length} records</span>
+          <h3>Resultados de Exames</h3>
+          <span className="muted-text">{results.length} registros</span>
         </div>
 
         <NoticeBanner notice={notice} />
 
         {loading ? (
-          <p className="muted-text">Loading results...</p>
+          <p className="muted-text">Carregando resultados...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Test</th>
-                  <th>Value</th>
-                  <th>Flag</th>
+                  <th>Data</th>
+                  <th>Exame</th>
+                  <th>Valor</th>
+                  <th>Alerta</th>
                 </tr>
               </thead>
               <tbody>
                 {sorted.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="empty-cell">
-                      No lab records yet.
+                      Nenhum resultado ainda.
                     </td>
                   </tr>
                 ) : (
@@ -168,17 +168,17 @@ export function PatientLabsPage() {
       </article>
 
       <article className="page-card stack-gap">
-        <h3>Add lab result</h3>
+        <h3>Adicionar Resultado de Exame</h3>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
-            Test
+            Exame
             <select
               className="input"
               value={form.test_definition_id}
               onChange={(event) => setForm((current) => ({ ...current, test_definition_id: event.target.value }))}
               required
             >
-              <option value="">Choose one</option>
+              <option value="">Escolha um</option>
               {definitions.map((definition) => (
                 <option key={definition.id} value={definition.id}>
                   {definition.name} ({definition.unit})
@@ -188,7 +188,7 @@ export function PatientLabsPage() {
           </label>
 
           <label>
-            Collection date
+            Data da Coleta
             <input
               className="input"
               type="date"
@@ -199,7 +199,7 @@ export function PatientLabsPage() {
           </label>
 
           <label>
-            Value
+            Valor
             <input
               className="input"
               type="number"
@@ -211,17 +211,17 @@ export function PatientLabsPage() {
           </label>
 
           <label>
-            Flag (optional)
+            Alerta (opcional)
             <input
               className="input"
               value={form.flag}
               onChange={(event) => setForm((current) => ({ ...current, flag: event.target.value }))}
-              placeholder="low / normal / high"
+              placeholder="baixo / normal / alto"
             />
           </label>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save lab result"}
+            {saving ? "Salvando..." : "Salvar Resultado"}
           </button>
         </form>
       </article>

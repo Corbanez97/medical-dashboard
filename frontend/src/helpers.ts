@@ -48,7 +48,7 @@ export function toTodayInput(): string {
 export function parseRequiredNumber(value: string, label: string): number {
   const parsed = Number(value.trim());
   if (value.trim() === "" || Number.isNaN(parsed)) {
-    throw new Error(`Required numeric field: ${label}`);
+    throw new Error(`Campo numérico obrigatório: ${label}`);
   }
   return parsed;
 }
@@ -61,7 +61,7 @@ export function parseOptionalNumber(value: string, label: string): number | null
 
   const parsed = Number(trimmed);
   if (Number.isNaN(parsed)) {
-    throw new Error(`Invalid numeric field: ${label}`);
+    throw new Error(`Campo numérico inválido: ${label}`);
   }
   return parsed;
 }
@@ -74,7 +74,7 @@ export function parseOptionalInt(value: string, label: string): number | null {
 
   const parsed = Number.parseInt(trimmed, 10);
   if (Number.isNaN(parsed)) {
-    throw new Error(`Invalid integer field: ${label}`);
+    throw new Error(`Campo inteiro inválido: ${label}`);
   }
   return parsed;
 }

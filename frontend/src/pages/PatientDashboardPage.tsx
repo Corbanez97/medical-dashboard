@@ -62,8 +62,8 @@ export function PatientDashboardPage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load dashboard data: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar dados do painel: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -123,39 +123,39 @@ export function PatientDashboardPage() {
     <div className="stack-gap">
       <div className="split-row">
         <div>
-          <h3>Overview</h3>
-          <p className="muted-text">Key metrics and alerts</p>
+          <h3>Visão Geral</h3>
+          <p className="muted-text">Métricas principais e alertas</p>
         </div>
       </div>
 
       <NoticeBanner notice={notice} />
 
       {loading ? (
-        <p className="muted-text">Loading dashboard...</p>
+        <p className="muted-text">Carregando painel...</p>
       ) : (
         <>
           <section className="metric-grid">
             <div className="metric-card">
-              <h4>Weight</h4>
+              <h4>Peso</h4>
               <strong>{latestBio ? `${latestBio.weight_kg} kg` : "-"}</strong>
               <span>
-                {latestBio ? `BMI: ${latestBio.bmi.toFixed(1)}` : "No data"}
+                {latestBio ? `IMC: ${latestBio.bmi.toFixed(1)}` : "Sem dados"}
               </span>
             </div>
             <div className="metric-card">
-              <h4>Body Fat</h4>
+              <h4>Gordura Corporal</h4>
               <strong>{latestBio ? `${latestBio.body_fat_percent}%` : "-"}</strong>
               <span>
-                {latestBio ? `${latestBio.fat_mass_kg} kg fat` : "No data"}
+                {latestBio ? `${latestBio.fat_mass_kg} kg gordura` : "Sem dados"}
               </span>
             </div>
             <div className="metric-card">
-              <h4>Muscle Mass</h4>
+              <h4>Massa Muscular</h4>
               <strong>{latestBio ? `${latestBio.muscle_mass_kg} kg` : "-"}</strong>
-              <span>Skeletal Muscle</span>
+              <span>Músculo Esquelético</span>
             </div>
             <div className="metric-card">
-              <h4>Waist</h4>
+              <h4>Cintura</h4>
               <strong>{latestAnthro ? `${formatOptional(latestAnthro.waist_cm)} cm` : "-"}</strong>
               <span>
                 {latestAnthro ? formatDate(latestAnthro.date) : "-"}
@@ -167,48 +167,48 @@ export function PatientDashboardPage() {
 
           <section className="grid-two">
             <EvolutionChart
-              title="Weight & Composition Evolution"
+              title="Evolução de Peso e Composição"
               data={weightData}
               lines={[
-                { key: "weight", color: "#111827", name: "Weight (kg)" },
-                { key: "muscle", color: "#c5a028", name: "Muscle (kg)" },
+                { key: "weight", color: "#111827", name: "Peso (kg)" },
+                { key: "muscle", color: "#c5a028", name: "Músculo (kg)" },
               ]}
             />
             <EvolutionChart
-              title="Body Fat % Evolution"
+              title="Evolução % Gordura Corporal"
               data={compositionData}
               lines={[
-                { key: "fat_percent", color: "#ef4444", name: "Body Fat %" },
-                { key: "hydration", color: "#3b82f6", name: "Hydration %" },
+                { key: "fat_percent", color: "#ef4444", name: "% Gordura Corporal" },
+                { key: "hydration", color: "#3b82f6", name: "% Hidratação" },
               ]}
             />
           </section>
 
           <section className="grid-two">
             <div className="page-card stack-gap-sm">
-              <h4>Recent Lab Results</h4>
+              <h4>Resultados de Exames Recentes</h4>
               <div className="table-wrap" style={{ border: "none" }}>
                 <table>
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Test</th>
-                      <th>Value</th>
-                      <th>Flag</th>
+                      <th>Data</th>
+                      <th>Exame</th>
+                      <th>Valor</th>
+                      <th>Alerta</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sortedLabs.length === 0 ? (
                       <tr>
                         <td colSpan={4} className="empty-cell">
-                          No lab results yet.
+                          Nenhum resultado de exame ainda.
                         </td>
                       </tr>
                     ) : (
                       sortedLabs.slice(0, 5).map((result) => (
                         <tr key={result.id}>
                           <td>{formatDate(result.collection_date)}</td>
-                          <td>{definitionMap.get(result.test_definition_id)?.name ?? "Unknown"}</td>
+                          <td>{definitionMap.get(result.test_definition_id)?.name ?? "Desconhecido"}</td>
                           <td>{result.value}</td>
                           <td>{result.flag ?? "-"}</td>
                         </tr>
@@ -220,21 +220,21 @@ export function PatientDashboardPage() {
             </div>
 
             <div className="page-card stack-gap-sm">
-              <h4>Subjective Logs</h4>
+              <h4>Registros Subjetivos</h4>
               <div className="table-wrap" style={{ border: "none" }}>
                 <table>
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Metric</th>
-                      <th>Score</th>
+                      <th>Data</th>
+                      <th>Métrica</th>
+                      <th>Pontuação</th>
                     </tr>
                   </thead>
                   <tbody>
                     {sortedSubjective.length === 0 ? (
                       <tr>
                         <td colSpan={3} className="empty-cell">
-                          No subjective data yet.
+                          Sem dados subjetivos ainda.
                         </td>
                       </tr>
                     ) : (

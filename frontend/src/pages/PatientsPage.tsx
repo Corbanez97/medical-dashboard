@@ -143,17 +143,17 @@ export function PatientsPage() {
         full_name: editForm.full_name.trim(),
         date_of_birth: editForm.date_of_birth,
         gender: editForm.gender,
-        height_cm: parseRequiredNumber(editForm.height_cm, "Height"),
+        height_cm: parseRequiredNumber(editForm.height_cm, "Altura"),
       };
       await medicalApi.updatePatient(editPatientId, payload);
       await loadPatients();
       closeEdit();
-      setNotice({ kind: "success", message: "Patient updated successfully." });
+      setNotice({ kind: "success", message: "Paciente atualizado com sucesso." });
     });
   };
 
   const onDeletePatient = (patient: Patient) => {
-    const confirmed = window.confirm(`Delete patient ${patient.full_name}?`);
+    const confirmed = window.confirm(`Tem certeza que deseja excluir o paciente ${patient.full_name}?`);
     if (!confirmed) {
       return;
     }
@@ -161,7 +161,7 @@ export function PatientsPage() {
     void runAction("delete-patient", async () => {
       await medicalApi.deletePatient(patient.id);
       await loadPatients();
-      setNotice({ kind: "success", message: "Patient deleted." });
+      setNotice({ kind: "success", message: "Paciente excluído." });
     });
   };
 
@@ -169,8 +169,8 @@ export function PatientsPage() {
     <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
       <header className="split-row" style={{ paddingBottom: "1.5rem", borderBottom: "1px solid var(--border)" }}>
         <div>
-          <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Patients</h1>
-          <p className="muted-text">Manage your patient records and access medical history.</p>
+          <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>Pacientes</h1>
+          <p className="muted-text">Gerencie os registros de seus pacientes e acesse o histórico médico.</p>
         </div>
         <div className="row-gap">
           <button
@@ -178,7 +178,7 @@ export function PatientsPage() {
             onClick={() => setIsCreateOpen(true)}
             style={{ height: "48px", paddingLeft: "1.5rem", paddingRight: "1.5rem" }}
           >
-            <span style={{ marginRight: "0.5rem", fontSize: "1.2rem" }}>+</span> New Patient
+            <span style={{ marginRight: "0.5rem", fontSize: "1.2rem" }}>+</span> Novo Paciente
           </button>
         </div>
       </header>
@@ -191,34 +191,34 @@ export function PatientsPage() {
             className="input"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search patients..."
+            placeholder="Buscar pacientes..."
             style={{ maxWidth: "320px" }}
           />
           <div className="muted-text">
-            {filteredPatients.length} records
+            {filteredPatients.length} registros
           </div>
         </div>
 
         {loading ? (
-          <p className="muted-text">Loading...</p>
+          <p className="muted-text">Carregando...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Name</th>
+                  <th>Nome</th>
                   <th>ID</th>
-                  <th>Age/DOB</th>
-                  <th>Gender</th>
-                  <th>Height</th>
-                  <th style={{ textAlign: "right" }}>Actions</th>
+                  <th>Idade/Data de Nasc.</th>
+                  <th>Gênero</th>
+                  <th>Altura</th>
+                  <th style={{ textAlign: "right" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredPatients.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="empty-cell" style={{ padding: "2rem" }}>
-                      No patients found.
+                      Nenhum paciente encontrado.
                     </td>
                   </tr>
                 ) : (
@@ -231,7 +231,7 @@ export function PatientsPage() {
                         </td>
                         <td className="muted-text">#{patient.id}</td>
                         <td>
-                          {age !== null ? `${age} yrs` : "N/A"}{" "}
+                          {age !== null ? `${age} anos` : "N/A"}{" "}
                           <span className="muted-text" style={{ fontSize: "0.8em" }}>
                             ({patient.date_of_birth})
                           </span>
@@ -246,7 +246,7 @@ export function PatientsPage() {
                               style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
                               onClick={() => navigate(`/patients/${patient.id}/dashboard`)}
                             >
-                              Open
+                              Abrir
                             </button>
                             <button
                               type="button"
@@ -254,7 +254,7 @@ export function PatientsPage() {
                               style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
                               onClick={() => startEdit(patient)}
                             >
-                              Edit
+                              Editar
                             </button>
                             <button
                               type="button"
@@ -262,7 +262,7 @@ export function PatientsPage() {
                               style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
                               onClick={() => onDeletePatient(patient)}
                             >
-                              Delete
+                              Excluir
                             </button>
                           </div>
                         </td>
@@ -280,22 +280,22 @@ export function PatientsPage() {
       <Modal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
-        title="Create New Patient"
+        title="Criar Novo Paciente"
       >
         <form className="form-grid" onSubmit={onCreatePatient}>
           <label>
-            Full Name
+            Nome Completo
             <input
               className="input"
               value={createForm.full_name}
               onChange={(event) => setCreateForm((current) => ({ ...current, full_name: event.target.value }))}
               required
-              placeholder="e.g. John Doe"
+              placeholder="Ex: João Silva"
             />
           </label>
           <div className="grid-two">
             <label>
-              Date of Birth
+              Data de Nascimento
               <input
                 className="input"
                 type="date"
@@ -305,7 +305,7 @@ export function PatientsPage() {
               />
             </label>
             <label>
-              Gender
+              Gênero
               <select
                 className="input"
                 value={createForm.gender}
@@ -318,7 +318,7 @@ export function PatientsPage() {
             </label>
           </div>
           <label>
-            Height (cm)
+            Altura (cm)
             <input
               className="input"
               type="number"
@@ -326,15 +326,15 @@ export function PatientsPage() {
               value={createForm.height_cm}
               onChange={(event) => setCreateForm((current) => ({ ...current, height_cm: event.target.value }))}
               required
-              placeholder="e.g. 175"
+              placeholder="Ex: 175"
             />
           </label>
           <div className="split-row" style={{ marginTop: "1rem" }}>
             <button type="button" className="button button--outline" onClick={() => setIsCreateOpen(false)}>
-              Cancel
+              Cancelar
             </button>
             <button className="button button--primary" type="submit" disabled={action === "create-patient"}>
-              {action === "create-patient" ? "Creating..." : "Create Patient"}
+              {action === "create-patient" ? "Criando..." : "Criar Paciente"}
             </button>
           </div>
         </form>
@@ -344,11 +344,11 @@ export function PatientsPage() {
       <Modal
         isOpen={editPatientId !== null}
         onClose={closeEdit}
-        title="Edit Patient"
+        title="Editar Paciente"
       >
         <form className="form-grid" onSubmit={onUpdatePatient}>
           <label>
-            Full Name
+            Nome Completo
             <input
               className="input"
               value={editForm.full_name}
@@ -358,7 +358,7 @@ export function PatientsPage() {
           </label>
           <div className="grid-two">
             <label>
-              Date of Birth
+              Data de Nascimento
               <input
                 className="input"
                 type="date"
@@ -368,7 +368,7 @@ export function PatientsPage() {
               />
             </label>
             <label>
-              Gender
+              Gênero
               <select
                 className="input"
                 value={editForm.gender}
@@ -381,7 +381,7 @@ export function PatientsPage() {
             </label>
           </div>
           <label>
-            Height (cm)
+            Altura (cm)
             <input
               className="input"
               type="number"
@@ -393,10 +393,10 @@ export function PatientsPage() {
           </label>
           <div className="split-row" style={{ marginTop: "1rem" }}>
             <button type="button" className="button button--outline" onClick={closeEdit}>
-              Cancel
+              Cancelar
             </button>
             <button className="button button--primary" type="submit" disabled={action === "update-patient"}>
-              {action === "update-patient" ? "Saving..." : "Save Changes"}
+              {action === "update-patient" ? "Salvando..." : "Salvar Alterações"}
             </button>
           </div>
         </form>

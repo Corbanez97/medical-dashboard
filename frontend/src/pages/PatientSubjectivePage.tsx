@@ -54,8 +54,8 @@ export function PatientSubjectivePage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load subjective data: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar dados subjetivos: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -77,7 +77,7 @@ export function PatientSubjectivePage() {
       try {
         const score = Number.parseInt(form.score, 10);
         if (Number.isNaN(score) || score < 0 || score > 10) {
-          throw new Error("Score must be between 0 and 10.");
+          throw new Error("A nota deve ser entre 0 e 10.");
         }
 
         const payload: SubjectiveEntryCreate = {
@@ -89,15 +89,15 @@ export function PatientSubjectivePage() {
         };
 
         if (!payload.metric_name) {
-          throw new Error("Metric name is required.");
+          throw new Error("Nome da métrica é obrigatório.");
         }
 
         await medicalApi.createSubjectiveEntry(payload);
         setForm(emptyForm);
         await loadEntries();
-        setNotice({ kind: "success", message: "Subjective entry saved." });
+        setNotice({ kind: "success", message: "Registro subjetivo salvo." });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setSaving(false);
@@ -111,30 +111,30 @@ export function PatientSubjectivePage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h3>Subjective history</h3>
-          <span className="muted-text">{entries.length} records</span>
+          <h3>Histórico Subjetivo</h3>
+          <span className="muted-text">{entries.length} registros</span>
         </div>
 
         <NoticeBanner notice={notice} />
 
         {loading ? (
-          <p className="muted-text">Loading history...</p>
+          <p className="muted-text">Carregando histórico...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Metric</th>
-                  <th>Score</th>
-                  <th>Notes</th>
+                  <th>Data</th>
+                  <th>Métrica</th>
+                  <th>Nota</th>
+                  <th>Notas</th>
                 </tr>
               </thead>
               <tbody>
                 {sorted.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="empty-cell">
-                      No subjective records yet.
+                      Nenhum registro subjetivo ainda.
                     </td>
                   </tr>
                 ) : (
@@ -154,10 +154,10 @@ export function PatientSubjectivePage() {
       </article>
 
       <article className="page-card stack-gap">
-        <h3>Add subjective entry</h3>
+        <h3>Adicionar registro subjetivo</h3>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
-            Date
+            Data
             <input
               className="input"
               type="date"
@@ -168,7 +168,7 @@ export function PatientSubjectivePage() {
           </label>
 
           <label>
-            Metric
+            Métrica
             <select
               className="input"
               value={form.metric_name}
@@ -183,7 +183,7 @@ export function PatientSubjectivePage() {
           </label>
 
           <label>
-            Score (0-10)
+            Nota (0-10)
             <input
               className="input"
               type="number"
@@ -197,7 +197,7 @@ export function PatientSubjectivePage() {
           </label>
 
           <label>
-            Notes
+            Notas
             <textarea
               className="input input--textarea"
               value={form.notes}
@@ -206,7 +206,7 @@ export function PatientSubjectivePage() {
           </label>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save subjective entry"}
+            {saving ? "Salvando..." : "Salvar Registro"}
           </button>
         </form>
       </article>

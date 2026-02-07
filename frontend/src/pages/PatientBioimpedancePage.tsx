@@ -65,8 +65,8 @@ export function PatientBioimpedancePage() {
         if (!active) {
           return;
         }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load bioimpedance data: ${message}` });
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message: `Não foi possível carregar dados de bioimpedância: ${message}` });
       } finally {
         if (active) {
           setLoading(false);
@@ -89,22 +89,22 @@ export function PatientBioimpedancePage() {
         const payload: BioimpedanceEntryCreate = {
           patient_id: patientId,
           date: form.date,
-          weight_kg: parseRequiredNumber(form.weight_kg, "Weight"),
-          bmi: parseRequiredNumber(form.bmi, "BMI"),
-          body_fat_percent: parseRequiredNumber(form.body_fat_percent, "Body fat"),
-          fat_mass_kg: parseRequiredNumber(form.fat_mass_kg, "Fat mass"),
-          muscle_mass_kg: parseRequiredNumber(form.muscle_mass_kg, "Muscle mass"),
-          visceral_fat_level: parseOptionalNumber(form.visceral_fat_level, "Visceral fat"),
-          basal_metabolic_rate_kcal: parseOptionalInt(form.basal_metabolic_rate_kcal, "BMR"),
-          hydration_percent: parseOptionalNumber(form.hydration_percent, "Hydration"),
+          weight_kg: parseRequiredNumber(form.weight_kg, "Peso"),
+          bmi: parseRequiredNumber(form.bmi, "IMC"),
+          body_fat_percent: parseRequiredNumber(form.body_fat_percent, "Gordura Corporal"),
+          fat_mass_kg: parseRequiredNumber(form.fat_mass_kg, "Massa Gorda"),
+          muscle_mass_kg: parseRequiredNumber(form.muscle_mass_kg, "Massa Muscular"),
+          visceral_fat_level: parseOptionalNumber(form.visceral_fat_level, "Gordura Visceral"),
+          basal_metabolic_rate_kcal: parseOptionalInt(form.basal_metabolic_rate_kcal, "TMB"),
+          hydration_percent: parseOptionalNumber(form.hydration_percent, "Hidratação"),
         };
 
         await medicalApi.createBioimpedanceEntry(payload);
         setForm(emptyForm);
         await loadEntries();
-        setNotice({ kind: "success", message: "Bioimpedance entry saved." });
+        setNotice({ kind: "success", message: "Registro de bioimpedância salvo." });
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Unknown error";
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setSaving(false);
@@ -118,31 +118,31 @@ export function PatientBioimpedancePage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h3>Bioimpedance history</h3>
-          <span className="muted-text">{entries.length} records</span>
+          <h3>Histórico de Bioimpedância</h3>
+          <span className="muted-text">{entries.length} registros</span>
         </div>
 
         <NoticeBanner notice={notice} />
 
         {loading ? (
-          <p className="muted-text">Loading history...</p>
+          <p className="muted-text">Carregando histórico...</p>
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Date</th>
-                  <th>Weight</th>
-                  <th>BMI</th>
-                  <th>Body fat %</th>
-                  <th>Muscle mass</th>
+                  <th>Data</th>
+                  <th>Peso</th>
+                  <th>IMC</th>
+                  <th>% Gordura</th>
+                  <th>Massa Muscular</th>
                 </tr>
               </thead>
               <tbody>
                 {sorted.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="empty-cell">
-                      No bioimpedance data yet.
+                      Sem dados de bioimpedância ainda.
                     </td>
                   </tr>
                 ) : (
@@ -163,10 +163,10 @@ export function PatientBioimpedancePage() {
       </article>
 
       <article className="page-card stack-gap">
-        <h3>Add bioimpedance entry</h3>
+        <h3>Adicionar registro de bioimpedância</h3>
         <form className="form-grid" onSubmit={onSubmit}>
           <label>
-            Date
+            Data
             <input
               className="input"
               type="date"
@@ -178,7 +178,7 @@ export function PatientBioimpedancePage() {
 
           <div className="grid-two">
             <label>
-              Weight (kg)
+              Peso (kg)
               <input
                 className="input"
                 type="number"
@@ -189,7 +189,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              BMI
+              IMC
               <input
                 className="input"
                 type="number"
@@ -200,7 +200,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              Body fat (%)
+              Gordura Corporal (%)
               <input
                 className="input"
                 type="number"
@@ -211,7 +211,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              Fat mass (kg)
+              Massa Gorda (kg)
               <input
                 className="input"
                 type="number"
@@ -222,7 +222,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              Muscle mass (kg)
+              Massa Muscular (kg)
               <input
                 className="input"
                 type="number"
@@ -233,7 +233,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              Visceral fat
+              Gordura Visceral
               <input
                 className="input"
                 type="number"
@@ -243,7 +243,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              BMR (kcal)
+              TMB (kcal)
               <input
                 className="input"
                 type="number"
@@ -255,7 +255,7 @@ export function PatientBioimpedancePage() {
               />
             </label>
             <label>
-              Hydration (%)
+              Hidratação (%)
               <input
                 className="input"
                 type="number"
@@ -267,7 +267,7 @@ export function PatientBioimpedancePage() {
           </div>
 
           <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save bioimpedance"}
+            {saving ? "Salvando..." : "Salvar Bioimpedância"}
           </button>
         </form>
       </article>
