@@ -24,6 +24,7 @@
 /* Gold Gradient Text */
 .text-gold-gradient {
     background: linear-gradient(to right, #B4975A, #D4AF37, #F0E68C, #B4975A);
+    background-attachment: fixed;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% auto;
@@ -66,6 +67,7 @@
 /* Logo Shining Effect */
 .logo-gold-shine {
     background: linear-gradient(to right, #B4975A, #D4AF37, #F0E68C, #B4975A);
+    background-attachment: fixed;
     background-size: 200% auto;
     animation: shine 4s linear infinite;
 
