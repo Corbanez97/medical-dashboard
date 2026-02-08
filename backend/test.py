@@ -365,3 +365,304 @@ async def test_read_patient_subjective(client):
     assert len(data) > 0
     assert data[0]["metric_name"] == "Energy"
 
+@pytest.mark.asyncio
+async def test_update_lab_definition(client):
+    # Create
+    create_resp = await client.post("/lab-definitions/", json={
+        "name": "Update Lab Def",
+        "category": "Update Cat",
+        "unit": "U",
+    })
+    def_id = create_resp.json()["id"]
+
+    # Update
+    response = await client.put(f"/lab-definitions/{def_id}", json={
+        "name": "Updated Lab Def",
+        "unit": "V"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == "Updated Lab Def"
+    assert data["unit"] == "V"
+
+    # Verify
+    get_resp = await client.get(f"/lab-definitions/{def_id}")
+    assert get_resp.json()["name"] == "Updated Lab Def"
+
+@pytest.mark.asyncio
+async def test_delete_lab_definition(client):
+    # Create
+    create_resp = await client.post("/lab-definitions/", json={
+        "name": "Delete Lab Def",
+        "category": "Delete Cat",
+        "unit": "U",
+    })
+    def_id = create_resp.json()["id"]
+
+    # Delete
+    response = await client.delete(f"/lab-definitions/{def_id}")
+    assert response.status_code == 204
+
+    # Verify
+    get_resp = await client.get(f"/lab-definitions/{def_id}")
+    assert get_resp.status_code == 404
+
+@pytest.mark.asyncio
+async def test_update_lab_result(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Lab Result Update Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    d_resp = await client.post("/lab-definitions/", json={
+        "name": "Lab Result Update Test",
+        "category": "Test",
+        "unit": "g"
+    })
+    def_id = d_resp.json()["id"]
+
+    create_resp = await client.post("/lab-results/", json={
+        "patient_id": patient_id,
+        "test_definition_id": def_id,
+        "collection_date": "2023-01-01",
+        "value": 50.0
+    })
+    result_id = create_resp.json()["id"]
+
+    # Update
+    response = await client.put(f"/lab-results/{result_id}", json={
+        "value": 60.0,
+        "flag": "High"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["value"] == 60.0
+    assert data["flag"] == "High"
+
+    # Verify
+    get_resp = await client.get(f"/lab-results/{result_id}")
+    assert get_resp.json()["value"] == 60.0
+
+@pytest.mark.asyncio
+async def test_delete_lab_result(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Lab Result Delete Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    d_resp = await client.post("/lab-definitions/", json={
+        "name": "Lab Result Delete Test",
+        "category": "Test",
+        "unit": "g"
+    })
+    def_id = d_resp.json()["id"]
+
+    create_resp = await client.post("/lab-results/", json={
+        "patient_id": patient_id,
+        "test_definition_id": def_id,
+        "collection_date": "2023-01-01",
+        "value": 50.0
+    })
+    result_id = create_resp.json()["id"]
+
+    # Delete
+    response = await client.delete(f"/lab-results/{result_id}")
+    assert response.status_code == 204
+
+    # Verify
+    get_resp = await client.get(f"/lab-results/{result_id}")
+    assert get_resp.status_code == 404
+
+@pytest.mark.asyncio
+async def test_update_bioimpedance_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Bio Update Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/bioimpedance/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "weight_kg": 80.0,
+        "bmi": 24.7,
+        "body_fat_percent": 15.0,
+        "fat_mass_kg": 12.0,
+        "muscle_mass_kg": 60.0
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Update
+    response = await client.put(f"/bioimpedance/{entry_id}", json={
+        "weight_kg": 82.0,
+        "bmi": 25.0
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["weight_kg"] == 82.0
+    assert data["bmi"] == 25.0
+
+    # Verify
+    get_resp = await client.get(f"/bioimpedance/{entry_id}")
+    assert get_resp.json()["weight_kg"] == 82.0
+
+@pytest.mark.asyncio
+async def test_delete_bioimpedance_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Bio Delete Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/bioimpedance/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "weight_kg": 80.0,
+        "bmi": 24.7,
+        "body_fat_percent": 15.0,
+        "fat_mass_kg": 12.0,
+        "muscle_mass_kg": 60.0
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Delete
+    response = await client.delete(f"/bioimpedance/{entry_id}")
+    assert response.status_code == 204
+
+    # Verify
+    get_resp = await client.get(f"/bioimpedance/{entry_id}")
+    assert get_resp.status_code == 404
+
+@pytest.mark.asyncio
+async def test_update_anthropometry_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Anthro Update Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/anthropometry/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "waist_cm": 90.0
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Update
+    response = await client.put(f"/anthropometry/{entry_id}", json={
+        "waist_cm": 92.0,
+        "abdomen_cm": 95.0
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["waist_cm"] == 92.0
+    assert data["abdomen_cm"] == 95.0
+
+    # Verify
+    get_resp = await client.get(f"/anthropometry/{entry_id}")
+    assert get_resp.json()["waist_cm"] == 92.0
+
+@pytest.mark.asyncio
+async def test_delete_anthropometry_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Anthro Delete Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/anthropometry/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "waist_cm": 90.0
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Delete
+    response = await client.delete(f"/anthropometry/{entry_id}")
+    assert response.status_code == 204
+
+    # Verify
+    get_resp = await client.get(f"/anthropometry/{entry_id}")
+    assert get_resp.status_code == 404
+
+@pytest.mark.asyncio
+async def test_update_subjective_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Subj Update Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/subjective/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "metric_name": "Sleep",
+        "score": 8
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Update
+    response = await client.put(f"/subjective/{entry_id}", json={
+        "score": 9,
+        "notes": "Much better"
+    })
+    assert response.status_code == 200
+    data = response.json()
+    assert data["score"] == 9
+    assert data["notes"] == "Much better"
+
+    # Verify
+    get_resp = await client.get(f"/subjective/{entry_id}")
+    assert get_resp.json()["score"] == 9
+
+@pytest.mark.asyncio
+async def test_delete_subjective_entry(client):
+    # Setup
+    p_resp = await client.post("/patients/", json={
+        "full_name": "Subj Delete Patient",
+        "date_of_birth": "1990-01-01",
+        "gender": "Masculino",
+        "height_cm": 180.0
+    })
+    patient_id = p_resp.json()["id"]
+
+    create_resp = await client.post("/subjective/", json={
+        "patient_id": patient_id,
+        "date": "2023-01-01",
+        "metric_name": "Sleep",
+        "score": 8
+    })
+    entry_id = create_resp.json()["id"]
+
+    # Delete
+    response = await client.delete(f"/subjective/{entry_id}")
+    assert response.status_code == 204
+
+    # Verify
+    get_resp = await client.get(f"/subjective/{entry_id}")
+    assert get_resp.status_code == 404
+
+
