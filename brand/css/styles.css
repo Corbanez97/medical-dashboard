@@ -26,6 +26,7 @@
     background: linear-gradient(to right, #B4975A, #D4AF37, #F0E68C, #B4975A);
     background-attachment: fixed;
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     background-size: 200% auto;
     animation: shine 4s linear infinite;
@@ -83,4 +84,14 @@
 
     -webkit-mask-size: contain;
     mask-size: contain;
+}
+
+/* Fading Architectural Grid */
+.bg-grid-architecture {
+    background-size: 40px 40px;
+    background-image:
+        linear-gradient(to right, rgba(184, 134, 11, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(184, 134, 11, 0.1) 1px, transparent 1px);
+    mask-image: radial-gradient(closest-side, black 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(closest-side, black 40%, transparent 100%);
 }
