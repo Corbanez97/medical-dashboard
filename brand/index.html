@@ -10,71 +10,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
         rel="stylesheet">
-    <style>
-        /* Custom Font Assignments */
-        .font-serif-brand {
-            font-family: 'Playfair Display', serif;
-        }
-
-        .font-sans-brand {
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f9fafb;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #B4975A;
-            border-radius: 4px;
-        }
-
-        /* Gold Gradient Text */
-        .text-gold-gradient {
-            background: linear-gradient(to right, #B4975A, #D4AF37, #F0E68C, #B4975A);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-size: 200% auto;
-            animation: shine 4s linear infinite;
-        }
-
-        @keyframes shine {
-            to {
-                background-position: 200% center;
-            }
-        }
-
-        /* Chart Container Utilities */
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-            height: 300px;
-            max-height: 400px;
-        }
-
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
-        }
-
-        /* Interactive Card Hover */
-        .interactive-card {
-            transition: all 0.3s ease;
-        }
-
-        .interactive-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
     <!-- Chosen Palette: Antique Gold (#B8860B) matching the logo, Deep Charcoal (#1A1A1A), Cream (#FAFAFA). -->
     <!-- Application Structure Plan: Single Page App. Sections: Hero (Logo/Intro), Strategy (Mission/Values), ID Visual (Colors/Typography), Position (Charts), Applications (Mockup). -->
     <!-- CONFIRMATION: NO SVG graphics used (EXCEPT FOR LOGO as requested). NO Mermaid JS used. -->
@@ -88,18 +24,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center space-x-4 cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <!-- SVG Logo Icon Small (Recentered) -->
+                    <!-- Logo Icon Small (Recentered) -->
                     <div class="w-12 h-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
-                            <g fill="#B8860B"> <!-- Brand Color -->
-                                <!-- Top bar: X=47.5 (Centered), Y=52.5 (Centered) -->
-                                <rect x="47.5" y="52.5" width="105" height="25" />
-                                <!-- Stem T: X=97.5 (Maintains relative offset), Y=76.5 -->
-                                <rect x="97.5" y="76.5" width="25" height="71" />
-                                <!-- Stem i: X=47.5 (Flush Left), Y=83.5 -->
-                                <rect x="47.5" y="83.5" width="44" height="64" />
-                            </g>
-                        </svg>
+                        <img src="assets/logo.svg" alt="Instituto Tatsch Logo" class="w-full h-full">
                     </div>
                     <div class="flex flex-col justify-center">
                         <span
@@ -115,8 +42,6 @@
                         class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Estratégia</button>
                     <button onclick="scrollToSection('identity')"
                         class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Identidade</button>
-                    <button onclick="scrollToSection('positioning')"
-                        class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Posicionamento</button>
                 </div>
                 <button class="md:hidden text-gray-600" onclick="toggleMobileMenu()">
                     <span class="text-2xl">☰</span>
@@ -175,21 +100,9 @@
                         class="absolute inset-4 border border-gray-200 rounded-full animate-[spin_15s_linear_infinite_reverse]">
                     </div>
 
-                    <!-- SVG Logo Large Presentation (Recentered) -->
+                    <!-- Logo Large Presentation (Recentered) -->
                     <div class="w-64 h-64 transform hover:scale-105 transition-transform duration-500 drop-shadow-2xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
-                            <g fill="#B8860B">
-                                <rect x="47.5" y="52.5" width="105" height="25" />
-                                <rect x="97.5" y="76.5" width="25" height="71" />
-                                <rect x="47.5" y="83.5" width="44" height="64" />
-                            </g>
-                        </svg>
-
-                        <!-- Guidelines (Decoration) -->
-                        <div class="absolute -left-8 top-[30%] w-[140%] h-[1px] bg-red-400/30 border-dashed border-t">
-                        </div>
-                        <div class="absolute left-[45%] -top-8 w-[1px] h-[140%] bg-red-400/30 border-dashed border-l">
-                        </div>
+                        <img src="assets/logo.svg" alt="Instituto Tatsch Logo" class="w-full h-full">
                     </div>
 
                     <p class="absolute -bottom-12 text-center text-xs text-gray-400 tracking-widest uppercase w-full">
@@ -378,41 +291,6 @@
         </div>
     </section>
 
-    <!-- Positioning & Data Section -->
-    <section id="positioning" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="font-serif-brand text-4xl text-gray-900">Posicionamento de Mercado</h2>
-                <p class="text-gray-500 mt-2">Dados que definem a voz e a estratégia da marca.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Chart 1: Brand Archetype -->
-                <div class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-100">
-                    <h3 class="font-serif-brand text-xl text-center mb-6 text-gray-800">Mix de Arquétipos</h3>
-                    <div class="chart-container">
-                        <canvas id="archetypeChart"></canvas>
-                    </div>
-                    <p class="text-center text-sm text-gray-500 mt-4 px-4">
-                        A marca combina a liderança do <strong>Governante</strong> com a sabedoria do
-                        <strong>Sábio</strong>.
-                    </p>
-                </div>
-
-                <!-- Chart 2: Audience Goals -->
-                <div class="bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-100">
-                    <h3 class="font-serif-brand text-xl text-center mb-6 text-gray-800">Interesses do Público</h3>
-                    <div class="chart-container">
-                        <canvas id="audienceChart"></canvas>
-                    </div>
-                    <p class="text-center text-sm text-gray-500 mt-4 px-4">
-                        Predominância na busca por <strong>Emagrecimento</strong> e performance.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Application / Mockup Section -->
     <section class="py-20 bg-[#111111] text-white overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -429,7 +307,7 @@
                             <span class="text-[#B8860B] mr-3 font-bold">✓</span> Design Responsivo "Mobile First"
                         </li>
                         <li class="flex items-center text-gray-300">
-                            <span class="text-[#B8860B] mr-3 font-bold">✓</span> CTAs em Dourado Sólido
+                            <span class="text-[#B8860B] mr-3 font-bold">✓</span> Calls-to-Actions em Dourado Sólido
                         </li>
                         <li class="flex items-center text-gray-300">
                             <span class="text-[#B8860B] mr-3 font-bold">✓</span> Imagens Clean e Aspiracionais
@@ -487,15 +365,9 @@
     <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 py-12 text-center">
         <div class="flex flex-col items-center justify-center">
-            <!-- SVG Logo Footer -->
+            <!-- Logo Footer -->
             <div class="w-16 h-16 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
-                    <g fill="#B8860B">
-                        <rect x="47.5" y="52.5" width="105" height="25" />
-                        <rect x="97.5" y="76.5" width="25" height="71" />
-                        <rect x="47.5" y="83.5" width="44" height="64" />
-                    </g>
-                </svg>
+                <img src="assets/logo.svg" alt="Instituto Tatsch Logo" class="w-full h-full">
             </div>
             <p class="font-serif-brand text-xl text-gray-900">INSTITUTO TATSCH</p>
             <p class="text-xs text-[#B8860B] tracking-[0.3em] uppercase mt-1">Emagrecimento & Longevidade</p>
@@ -504,174 +376,7 @@
     </footer>
 
     <!-- JavaScript Logic -->
-    <script>
-        // State Management
-        const state = {
-            currentSection: 'concept',
-            colors: {
-                primary: '#B8860B',
-                secondary: '#1A1A1A',
-                bg: '#FAFAFA'
-            }
-        };
-
-        // Navigation Function
-        function scrollToSection(sectionId) {
-            const section = document.getElementById(sectionId);
-            if (section) {
-                const navHeight = document.getElementById('navbar').offsetHeight;
-                const targetPosition = section.offsetTop - navHeight;
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        }
-
-        // Mobile Menu Toggle
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        // Color Copy Function
-        function copyToClipboard(hex, msgId) {
-            navigator.clipboard.writeText(hex).then(() => {
-                const msgEl = document.getElementById(msgId);
-                const originalText = msgEl.innerText;
-                msgEl.innerText = "Copiado!";
-                msgEl.classList.remove('opacity-0');
-                setTimeout(() => {
-                    msgEl.innerText = originalText;
-                    msgEl.classList.add('opacity-0');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        }
-
-        // Font Preview Function
-        function updateFontPreview() {
-            const input = document.getElementById('fontTesterInput');
-            const heading = document.getElementById('previewHeading');
-            const body = document.getElementById('previewBody');
-
-            if (input.value.trim() !== "") {
-                heading.innerText = input.value;
-                body.innerText = input.value + " - Exemplo de visualização.";
-            } else {
-                heading.innerText = "Dr. Tatsch Nutrologia";
-                body.innerText = "A busca pelo corpo ideal deve estar alinhada à saúde plena. Agende sua consulta.";
-            }
-        }
-
-        // Chart Initialization
-        document.addEventListener('DOMContentLoaded', function () {
-            Chart.defaults.font.family = "'Montserrat', sans-serif";
-            Chart.defaults.color = '#6B7280';
-
-            // Fix: Override default locale behavior to prevent RangeError
-            // We define explicit callback functions for ticks.
-
-            // 1. Archetype Radar Chart
-            const ctxArchetype = document.getElementById('archetypeChart').getContext('2d');
-            new Chart(ctxArchetype, {
-                type: 'radar',
-                data: {
-                    labels: ['Governante', 'Sábio', 'Cuidador', 'Mago', 'Explorador'],
-                    datasets: [{
-                        label: 'Personalidade',
-                        data: [35, 35, 20, 15, 5],
-                        backgroundColor: 'rgba(184, 134, 11, 0.2)', // #B8860B
-                        borderColor: '#B8860B',
-                        pointBackgroundColor: '#1A1A1A',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#B8860B'
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { color: 'rgba(0,0,0,0.05)' },
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            pointLabels: {
-                                font: { size: 11, weight: '600' },
-                                color: '#374151'
-                            },
-                            ticks: {
-                                display: false,
-                                max: 40,
-                                // EXPLICIT CALLBACK TO FIX RANGE ERROR
-                                callback: function (value) { return value; }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                // EXPLICIT CALLBACK FOR TOOLTIP
-                                label: function (context) {
-                                    return context.label + ': ' + context.raw + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            // 2. Audience Bar Chart
-            const ctxAudience = document.getElementById('audienceChart').getContext('2d');
-            new Chart(ctxAudience, {
-                type: 'bar',
-                data: {
-                    labels: ['Emagrecimento', 'Longevidade', 'Hipertrofia', 'Hormonal', 'Preventivo'],
-                    datasets: [{
-                        label: 'Interesse Primário',
-                        data: [45, 30, 15, 5, 5],
-                        backgroundColor: [
-                            '#B8860B',
-                            '#1A1A1A',
-                            '#D1D5DB',
-                            '#D1D5DB',
-                            '#D1D5DB'
-                        ],
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { borderDash: [2, 4], color: '#f3f4f6' },
-                            ticks: {
-                                // EXPLICIT CALLBACK TO FIX RANGE ERROR
-                                callback: function (value) { return value + '%'; }
-                            }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1A1A1A',
-                            titleFont: { family: "'Playfair Display', serif" },
-                            callbacks: {
-                                label: function (context) {
-                                    return context.parsed.y + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
