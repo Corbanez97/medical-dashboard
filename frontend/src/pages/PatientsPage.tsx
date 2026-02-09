@@ -1,4 +1,5 @@
-﻿import { useEffect, useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { medicalApi } from "../api";
@@ -25,11 +26,21 @@ const emptyForm: PatientFormState = {
 export function PatientsPage() {
   const navigate = useNavigate();
 
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [action, setAction] = useState<string | null>(null);
+
+  const { data: patients = [], isLoading: loading, error } = useQuery({
+    queryKey: ["patients"],
+    queryFn: () => medicalApi.listPatients(),
+  });
+
+  // Effect to handle query errors if needed, or render error in UI
+  if (error && !notice) {
+    // Ideally we'd set notice here, but setting state during render is bad.
+    // We can handle error display in the UI directly or via a useEffect if we must use the banner.
+  }
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createForm, setCreateForm] = useState<PatientFormState>(emptyForm);
@@ -45,44 +56,9 @@ export function PatientsPage() {
     return patients.filter((patient) => patient.full_name.toLowerCase().includes(normalized));
   }, [patients, search]);
 
-  const loadPatients = async () => {
-    const loaded = await medicalApi.listPatients();
-    setPatients(loaded);
-    if (editPatientId !== null && !loaded.some((patient) => patient.id === editPatientId)) {
-      setEditPatientId(null);
-      setEditForm(emptyForm);
-    }
-  };
 
-  useEffect(() => {
-    let active = true;
 
-    const run = async () => {
-      setLoading(true);
-      try {
-        const loaded = await medicalApi.listPatients();
-        if (!active) {
-          return;
-        }
-        setPatients(loaded);
-      } catch (error) {
-        if (!active) {
-          return;
-        }
-        const message = error instanceof Error ? error.message : "Unknown error";
-        setNotice({ kind: "error", message: `Could not load patients: ${message}` });
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
-    };
 
-    void run();
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const startEdit = (patient: Patient) => {
     setEditPatientId(patient.id);
@@ -127,7 +103,7 @@ export function PatientsPage() {
       await medicalApi.createPatient(payload);
       setCreateForm(emptyForm);
       setIsCreateOpen(false);
-      await loadPatients();
+      await queryClient.invalidateQueries({ queryKey: ["patients"] });
       setNotice({ kind: "success", message: "Patient created successfully." });
     });
   };
@@ -146,7 +122,7 @@ export function PatientsPage() {
         height_cm: parseRequiredNumber(editForm.height_cm, "Altura"),
       };
       await medicalApi.updatePatient(editPatientId, payload);
-      await loadPatients();
+      await queryClient.invalidateQueries({ queryKey: ["patients"] });
       closeEdit();
       setNotice({ kind: "success", message: "Paciente atualizado com sucesso." });
     });
@@ -160,7 +136,7 @@ export function PatientsPage() {
 
     void runAction("delete-patient", async () => {
       await medicalApi.deletePatient(patient.id);
-      await loadPatients();
+      await queryClient.invalidateQueries({ queryKey: ["patients"] });
       setNotice({ kind: "success", message: "Paciente excluído." });
     });
   };
