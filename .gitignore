@@ -29,3 +29,4 @@ dist/
 build/
 .venv/
 __pycache__/
+frontend/.env_master.example
