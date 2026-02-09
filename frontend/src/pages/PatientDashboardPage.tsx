@@ -4,7 +4,7 @@ import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
 import { EvolutionChart } from "../components/dashboard/EvolutionChart";
 import { LabAlerts } from "../components/dashboard/LabAlerts";
-import { formatDate, formatOptional } from "../helpers";
+import { formatDate, formatDecimal, formatOptional } from "../helpers";
 import type { Notice } from "../helpers";
 import type {
   AnthropometryEntry,
@@ -137,26 +137,26 @@ export function PatientDashboardPage() {
           <section className="metric-grid">
             <div className="metric-card">
               <h4>Peso</h4>
-              <strong>{latestBio ? `${latestBio.weight_kg} kg` : "-"}</strong>
+              <strong>{latestBio ? `${formatDecimal(latestBio.weight_kg)} kg` : "-"}</strong>
               <span>
-                {latestBio ? `IMC: ${latestBio.bmi.toFixed(1)}` : "Sem dados"}
+                {latestBio ? `IMC: ${formatDecimal(latestBio.bmi)}` : "Sem dados"}
               </span>
             </div>
             <div className="metric-card">
               <h4>Gordura Corporal</h4>
-              <strong>{latestBio ? `${latestBio.body_fat_percent}%` : "-"}</strong>
+              <strong>{latestBio ? `${formatDecimal(latestBio.body_fat_percent)}%` : "-"}</strong>
               <span>
-                {latestBio ? `${latestBio.fat_mass_kg} kg gordura` : "Sem dados"}
+                {latestBio ? `${formatDecimal(latestBio.fat_mass_kg)} kg gordura` : "Sem dados"}
               </span>
             </div>
             <div className="metric-card">
               <h4>Massa Muscular</h4>
-              <strong>{latestBio ? `${latestBio.muscle_mass_kg} kg` : "-"}</strong>
+              <strong>{latestBio ? `${formatDecimal(latestBio.muscle_mass_kg)} kg` : "-"}</strong>
               <span>Músculo Esquelético</span>
             </div>
             <div className="metric-card">
               <h4>Cintura</h4>
-              <strong>{latestAnthro ? `${formatOptional(latestAnthro.waist_cm)} cm` : "-"}</strong>
+              <strong>{latestAnthro ? `${formatDecimal(latestAnthro.waist_cm)} cm` : "-"}</strong>
               <span>
                 {latestAnthro ? formatDate(latestAnthro.date) : "-"}
               </span>
@@ -209,7 +209,7 @@ export function PatientDashboardPage() {
                         <tr key={result.id}>
                           <td>{formatDate(result.collection_date)}</td>
                           <td>{definitionMap.get(result.test_definition_id)?.name ?? "Desconhecido"}</td>
-                          <td>{result.value}</td>
+                          <td>{formatDecimal(result.value)}</td>
                           <td>{result.flag ?? "-"}</td>
                         </tr>
                       ))

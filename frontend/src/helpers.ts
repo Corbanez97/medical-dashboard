@@ -26,6 +26,15 @@ export function formatOptional(value: number | null | string): string {
   return String(value);
 }
 
+export function formatDecimal(value: number | undefined | null): string {
+  if (value === undefined || value === null) {
+    return "-";
+  }
+  return new Intl.NumberFormat("pt-BR", {
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
 export function calculateAge(dateOfBirth: string): number | null {
   const birthDate = new Date(`${dateOfBirth}T00:00:00`);
   if (Number.isNaN(birthDate.getTime())) {

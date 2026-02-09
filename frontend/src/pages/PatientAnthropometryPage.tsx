@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { useOutletContext } from "react-router-dom";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
-import { formatDate, formatOptional, parseOptionalNumber, toTodayInput } from "../helpers";
+import { formatDate, formatDecimal, parseOptionalNumber, toTodayInput } from "../helpers";
 import type { Notice } from "../helpers";
 import type { AnthropometryEntry, AnthropometryEntryCreate } from "../types";
 import type { PatientRouteContext } from "./PatientRouteLayout";
@@ -146,11 +146,11 @@ export function PatientAnthropometryPage() {
                   sorted.map((entry) => (
                     <tr key={entry.id}>
                       <td>{formatDate(entry.date)}</td>
-                      <td>{formatOptional(entry.waist_cm)}</td>
-                      <td>{formatOptional(entry.abdomen_cm)}</td>
-                      <td>{formatOptional(entry.hips_cm)}</td>
-                      <td>{formatOptional(entry.right_arm_cm)}</td>
-                      <td>{formatOptional(entry.left_arm_cm)}</td>
+                      <td>{formatDecimal(entry.waist_cm)}</td>
+                      <td>{formatDecimal(entry.abdomen_cm)}</td>
+                      <td>{formatDecimal(entry.hips_cm)}</td>
+                      <td>{formatDecimal(entry.right_arm_cm)}</td>
+                      <td>{formatDecimal(entry.left_arm_cm)}</td>
                     </tr>
                   ))
                 )}

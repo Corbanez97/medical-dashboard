@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { useOutletContext } from "react-router-dom";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
-import { formatDate, parseOptionalInt, parseOptionalNumber, parseRequiredNumber, toTodayInput } from "../helpers";
+import { formatDate, formatDecimal, parseOptionalInt, parseOptionalNumber, parseRequiredNumber, toTodayInput } from "../helpers";
 import type { Notice } from "../helpers";
 import type { BioimpedanceEntry, BioimpedanceEntryCreate } from "../types";
 import type { PatientRouteContext } from "./PatientRouteLayout";
@@ -149,10 +149,10 @@ export function PatientBioimpedancePage() {
                   sorted.map((entry) => (
                     <tr key={entry.id}>
                       <td>{formatDate(entry.date)}</td>
-                      <td>{entry.weight_kg} kg</td>
-                      <td>{entry.bmi}</td>
-                      <td>{entry.body_fat_percent}</td>
-                      <td>{entry.muscle_mass_kg} kg</td>
+                      <td>{formatDecimal(entry.weight_kg)} kg</td>
+                      <td>{formatDecimal(entry.bmi)}</td>
+                      <td>{formatDecimal(entry.body_fat_percent)}</td>
+                      <td>{formatDecimal(entry.muscle_mass_kg)} kg</td>
                     </tr>
                   ))
                 )}
