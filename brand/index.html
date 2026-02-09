@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instituto Tatsch</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Chosen Palette: Antique Gold (#B8860B) matching the logo, Deep Charcoal (#1A1A1A), Cream (#FAFAFA). -->
+    <!-- Application Structure Plan: Single Page App. Sections: Hero (Logo/Intro), Strategy (Mission/Values), ID Visual (Colors/Typography), Position (Charts), Applications (Mockup). -->
+    <!-- CONFIRMATION: NO SVG graphics used (EXCEPT FOR LOGO as requested). NO Mermaid JS used. -->
+</head>
+
+<body class="bg-[#FAFAFA] text-gray-800 font-sans-brand antialiased selection:bg-[#B8860B] selection:text-white">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md border-b border-[#B8860B]/20 shadow-sm transition-all duration-300"
+        id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center space-x-4 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <!-- Logo Icon Small (Recentered) -->
+                    <div class="w-12 h-12">
+                        <img src="assets/logo.svg" alt="Instituto Tatsch Logo" class="w-full h-full">
+                    </div>
+                    <div class="flex flex-col justify-center">
+                        <span
+                            class="font-serif-brand text-lg font-bold tracking-widest text-gray-900 leading-none">INSTITUTO</span>
+                        <span
+                            class="font-sans-brand text-sm font-bold tracking-[0.2em] text-[#B8860B] leading-none mt-1">TATSCH</span>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <button onclick="scrollToSection('concept')"
+                        class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Conceito</button>
+                    <button onclick="scrollToSection('strategy')"
+                        class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Estratégia</button>
+                    <button onclick="scrollToSection('identity')"
+                        class="text-gray-600 hover:text-[#B8860B] text-sm tracking-widest uppercase transition-colors">Identidade</button>
+                </div>
+                <button class="md:hidden text-gray-600" onclick="toggleMobileMenu()">
+                    <span class="text-2xl">☰</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 p-4 space-y-4">
+            <button onclick="scrollToSection('concept'); toggleMobileMenu()"
+                class="block w-full text-left text-gray-600 hover:text-[#B8860B]">Conceito</button>
+            <button onclick="scrollToSection('strategy'); toggleMobileMenu()"
+                class="block w-full text-left text-gray-600 hover:text-[#B8860B]">Estratégia</button>
+            <button onclick="scrollToSection('identity'); toggleMobileMenu()"
+                class="block w-full text-left text-gray-600 hover:text-[#B8860B]">Identidade</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="concept"
+        class="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="order-2 lg:order-1 space-y-8">
+                <div class="inline-block px-4 py-1 border border-[#B8860B] rounded-full">
+                    <span class="text-xs font-bold tracking-[0.2em] text-[#B8860B] uppercase">Brand Book 2024</span>
+                </div>
+                <h1 class="font-serif-brand text-5xl md:text-7xl text-gray-900 leading-tight">
+                    A ciência da <br />
+                    <span class="text-gold-gradient italic">Longevidade</span>
+                </h1>
+                <p class="text-lg text-gray-600 leading-relaxed max-w-lg border-l-4 border-[#B8860B] pl-6">
+                    Uma marca forjada na excelência médica. O <strong>Instituto Tatsch</strong> une a precisão da
+                    nutrologia com o cuidado exclusivo para quem busca alta performance e emagrecimento definitivo.
+                </p>
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <div
+                        class="bg-white p-4 shadow-md rounded-lg border-t-2 border-[#B8860B] w-full sm:w-auto interactive-card">
+                        <p class="text-sm text-gray-500 uppercase tracking-wide">Público-Alvo</p>
+                        <p class="font-serif-brand text-xl">Classe A/A+</p>
+                    </div>
+                    <div
+                        class="bg-white p-4 shadow-md rounded-lg border-t-2 border-[#B8860B] w-full sm:w-auto interactive-card">
+                        <p class="text-sm text-gray-500 uppercase tracking-wide">Foco</p>
+                        <p class="font-serif-brand text-xl">Nutrologia Premium</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logo Construction Visualization -->
+            <div
+                class="order-1 lg:order-2 flex justify-center items-center bg-transparent rounded-3xl p-4 bg-grid-architecture">
+                <div class="relative w-full h-[500px] flex flex-col items-center justify-center">
+
+                    <!-- Logo Large Presentation (Recentered) -->
+                    <div
+                        class="w-[500px] h-[500px] transform hover:scale-105 transition-transform duration-500 logo-gold-shine">
+                    </div>
+
+                    <p class="absolute -bottom-12 text-center text-xs text-gray-400 tracking-widest uppercase w-full">
+                        Sintetizando "i" e "T" em bloco único
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Strategy Section -->
+    <section id="strategy" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-16 text-center max-w-3xl mx-auto">
+                <h2 class="font-serif-brand text-4xl text-gray-900 mb-4">Essência Estratégica</h2>
+                <p class="text-gray-500">O alicerce ético e visionário da marca.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Mission -->
+                <div
+                    class="bg-[#FAFAFA] p-8 rounded-xl border border-gray-100 interactive-card relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-[#B8860B]/5 rounded-bl-full transition-all group-hover:bg-[#B8860B]/10">
+                    </div>
+                    <h3 class="font-serif-brand text-2xl text-[#B8860B] mb-4">Missão</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Transformar vidas através da inteligência metabólica, oferecendo emagrecimento sustentável e
+                        longevidade com base científica rigorosa e atendimento humanizado.
+                    </p>
+                </div>
+
+                <!-- Vision -->
+                <div
+                    class="bg-[#FAFAFA] p-8 rounded-xl border border-gray-100 interactive-card relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-[#B8860B]/5 rounded-bl-full transition-all group-hover:bg-[#B8860B]/10">
+                    </div>
+                    <h3 class="font-serif-brand text-2xl text-[#B8860B] mb-4">Visão</h3>
+                    <p class="text-gray-600 leading-relaxed">
+                        Ser a autoridade máxima em medicina do estilo de vida na região, reconhecido como o porto seguro
+                        para quem busca saúde integral e estética de resultado.
+                    </p>
+                </div>
+
+                <!-- Values -->
+                <div
+                    class="bg-[#FAFAFA] p-8 rounded-xl border border-gray-100 interactive-card relative overflow-hidden group">
+                    <div
+                        class="absolute top-0 right-0 w-24 h-24 bg-[#B8860B]/5 rounded-bl-full transition-all group-hover:bg-[#B8860B]/10">
+                    </div>
+                    <h3 class="font-serif-brand text-2xl text-[#B8860B] mb-4">Valores</h3>
+                    <ul class="space-y-3 text-gray-600">
+                        <li class="flex items-center"><span
+                                class="w-1.5 h-1.5 bg-[#B8860B] rounded-full mr-3"></span>Ciência Baseada em Evidência
+                        </li>
+                        <li class="flex items-center"><span
+                                class="w-1.5 h-1.5 bg-[#B8860B] rounded-full mr-3"></span>Atendimento Premium</li>
+                        <li class="flex items-center"><span
+                                class="w-1.5 h-1.5 bg-[#B8860B] rounded-full mr-3"></span>Ética & Transparência</li>
+                        <li class="flex items-center"><span
+                                class="w-1.5 h-1.5 bg-[#B8860B] rounded-full mr-3"></span>Foco no Paciente</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visual Identity Section -->
+    <section id="identity" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="text-[#B8860B] tracking-[0.3em] text-xs font-bold uppercase">Código Visual</span>
+                <h2 class="font-serif-brand text-4xl text-gray-900 mt-2">Cores & Tipografia</h2>
+                <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
+                    A paleta "Antique Gold" transmite sobriedade e luxo, afastando-se do amarelo vibrante varejista e
+                    aproximando-se do dourado nobre.
+                </p>
+            </div>
+
+            <!-- Colors Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+                <!-- Color 1 -->
+                <div class="group cursor-pointer" onclick="copyToClipboard('#B8860B', 'color-msg-1')">
+                    <div
+                        class="h-40 bg-[#B8860B] rounded-t-xl shadow-lg relative flex items-center justify-center group-hover:bg-[#9A7008] transition-colors">
+                        <span id="color-msg-1"
+                            class="opacity-0 group-hover:opacity-100 text-white font-medium transition-opacity">Copiar
+                            HEX</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-b-xl shadow-sm border border-t-0 border-gray-100">
+                        <h4 class="font-bold text-gray-800">Ouro Tatsch</h4>
+                        <p class="text-xs text-gray-500 mt-1">Primária • Nobreza</p>
+                        <code class="block mt-2 text-xs bg-gray-100 p-1 rounded w-max text-gray-600">#B8860B</code>
+                        <div class="mt-2 text-xs text-gray-400">CMYK: 30, 45, 100, 10</div>
+                    </div>
+                </div>
+
+                <!-- Color 2 -->
+                <div class="group cursor-pointer" onclick="copyToClipboard('#1A1A1A', 'color-msg-2')">
+                    <div
+                        class="h-40 bg-[#1A1A1A] rounded-t-xl shadow-lg relative flex items-center justify-center group-hover:bg-black transition-colors">
+                        <span id="color-msg-2"
+                            class="opacity-0 group-hover:opacity-100 text-white font-medium transition-opacity">Copiar
+                            HEX</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-b-xl shadow-sm border border-t-0 border-gray-100">
+                        <h4 class="font-bold text-gray-800">Preto Profundo</h4>
+                        <p class="text-xs text-gray-500 mt-1">Texto • Contraste</p>
+                        <code class="block mt-2 text-xs bg-gray-100 p-1 rounded w-max text-gray-600">#1A1A1A</code>
+                        <div class="mt-2 text-xs text-gray-400">CMYK: 70, 60, 60, 90</div>
+                    </div>
+                </div>
+
+                <!-- Color 3 -->
+                <div class="group cursor-pointer" onclick="copyToClipboard('#FAFAFA', 'color-msg-3')">
+                    <div
+                        class="h-40 bg-[#FAFAFA] rounded-t-xl shadow-lg relative flex items-center justify-center border border-gray-200">
+                        <span id="color-msg-3"
+                            class="opacity-0 group-hover:opacity-100 text-gray-600 font-medium transition-opacity">Copiar
+                            HEX</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-b-xl shadow-sm border border-t-0 border-gray-100">
+                        <h4 class="font-bold text-gray-800">Off-White</h4>
+                        <p class="text-xs text-gray-500 mt-1">Fundo • Limpeza</p>
+                        <code class="block mt-2 text-xs bg-gray-100 p-1 rounded w-max text-gray-600">#FAFAFA</code>
+                        <div class="mt-2 text-xs text-gray-400">CMYK: 0, 0, 0, 2</div>
+                    </div>
+                </div>
+
+                <!-- Color 4 (Accent) -->
+                <div class="group cursor-pointer" onclick="copyToClipboard('#D1D5DB', 'color-msg-4')">
+                    <div
+                        class="h-40 bg-gray-300 rounded-t-xl shadow-lg relative flex items-center justify-center border border-gray-300">
+                        <span id="color-msg-4"
+                            class="opacity-0 group-hover:opacity-100 text-gray-600 font-medium transition-opacity">Copiar
+                            HEX</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-b-xl shadow-sm border border-t-0 border-gray-100">
+                        <h4 class="font-bold text-gray-800">Cinza Médio</h4>
+                        <p class="text-xs text-gray-500 mt-1">Detalhes • Suporte</p>
+                        <code class="block mt-2 text-xs bg-gray-100 p-1 rounded w-max text-gray-600">#D1D5DB</code>
+                        <div class="mt-2 text-xs text-gray-400">CMYK: 20, 15, 15, 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography Interactive Area -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start border-t border-gray-200 pt-16">
+                <div>
+                    <h3 class="text-2xl font-serif-brand text-gray-900 mb-6">Tipografia Institucional</h3>
+                    <div class="mb-8">
+                        <span class="text-xs font-bold text-[#B8860B] uppercase tracking-widest block mb-2">Títulos
+                            (Serifada)</span>
+                        <div class="font-serif-brand text-4xl md:text-5xl text-gray-800 mb-2">Playfair Display</div>
+                        <p class="text-gray-500 text-sm">Clássica, com alto contraste. Evoca a tradição médica e a
+                            sofisticação do público classe A.</p>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold text-[#B8860B] uppercase tracking-widest block mb-2">Corpo (Sans
+                            Serif)</span>
+                        <div class="font-sans-brand text-3xl md:text-4xl text-gray-800 mb-2">Montserrat</div>
+                        <p class="text-gray-500 text-sm">Moderna, geométrica e extremamente legível em meios digitais.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Font Tester -->
+                <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+                    <h4 class="text-sm font-bold text-gray-400 uppercase mb-4">Simulador de Texto</h4>
+                    <div class="space-y-4">
+                        <input type="text" id="fontTesterInput" placeholder="Digite seu texto aqui..."
+                            class="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#B8860B] focus:border-transparent outline-none transition-all"
+                            oninput="updateFontPreview()">
+
+                        <div class="p-6 bg-gray-50 rounded-lg min-h-[150px] flex flex-col justify-center gap-4">
+                            <h2 id="previewHeading" class="font-serif-brand text-3xl text-gray-900 leading-tight">Dr.
+                                Tatsch Nutrologia</h2>
+                            <p id="previewBody" class="font-sans-brand text-gray-600 leading-relaxed">
+                                A busca pelo corpo ideal deve estar alinhada à saúde plena. Agende sua consulta.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Application / Mockup Section -->
+    <section class="py-20 bg-[#111111] text-white overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="text-[#B8860B] tracking-widest text-sm font-bold uppercase">Digital Experience</span>
+                    <h2 class="font-serif-brand text-4xl mt-4 mb-6">Presença Digital</h2>
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        No ambiente web, o minimalismo é rei. O uso estratégico de "white space" transmite a clareza
+                        mental e a pureza que o paciente busca no tratamento.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-center text-gray-300">
+                            <span class="text-[#B8860B] mr-3 font-bold">✓</span> Design Responsivo "Mobile First"
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="text-[#B8860B] mr-3 font-bold">✓</span> Calls-to-Actions em Dourado Sólido
+                        </li>
+                        <li class="flex items-center text-gray-300">
+                            <span class="text-[#B8860B] mr-3 font-bold">✓</span> Imagens Clean e Aspiracionais
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Website Mockup CSS Construction -->
+                <div
+                    class="relative rounded-lg overflow-hidden shadow-2xl bg-white border-4 border-gray-800 interactive-card transform rotate-1 hover:rotate-0 transition-transform duration-500">
+                    <!-- Browser Bar -->
+                    <div class="bg-gray-100 p-2 border-b flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                    </div>
+                    <!-- Content -->
+                    <div class="p-8">
+                        <div class="flex justify-between items-center mb-8">
+                            <!-- Mockup Logo -->
+                            <div class="flex items-center space-x-2">
+                                <div class="w-4 h-4 bg-[#B8860B]"></div>
+                                <div class="h-2 w-24 bg-gray-800 rounded"></div>
+                            </div>
+                            <!-- Mockup Nav -->
+                            <div class="flex space-x-3">
+                                <div class="h-1.5 w-8 bg-gray-300 rounded"></div>
+                                <div class="h-1.5 w-8 bg-gray-300 rounded"></div>
+                                <div class="h-1.5 w-8 bg-gray-300 rounded"></div>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-1/2 space-y-3 pt-2">
+                                <div class="h-6 w-3/4 bg-gray-800 rounded"></div>
+                                <div class="h-6 w-1/2 bg-gray-800 rounded"></div>
+                                <div class="h-3 w-full bg-gray-100 rounded mt-2"></div>
+                                <div class="h-3 w-5/6 bg-gray-100 rounded"></div>
+                                <div
+                                    class="h-8 w-32 bg-[#B8860B] rounded mt-4 flex items-center justify-center text-[8px] text-white font-bold tracking-widest">
+                                    AGENDAR</div>
+                            </div>
+                            <div class="w-1/2">
+                                <div
+                                    class="h-40 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-300 text-xs uppercase">Foto Dr.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 py-12 text-center">
+        <div class="flex flex-col items-center justify-center">
+            <!-- Logo Footer -->
+            <div class="w-16 h-16 mb-4">
+                <img src="assets/logo.svg" alt="Instituto Tatsch Logo" class="w-full h-full">
+            </div>
+            <p class="font-serif-brand text-xl text-gray-900">INSTITUTO TATSCH</p>
+            <p class="text-xs text-[#B8860B] tracking-[0.3em] uppercase mt-1">Emagrecimento & Longevidade</p>
+            <p class="text-gray-400 text-sm mt-8">© 2024 Brand Guidelines.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script src="js/main.js"></script>
+</body>
+
+</html>
