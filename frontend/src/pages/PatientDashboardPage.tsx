@@ -5,7 +5,7 @@ import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
 import { EvolutionChart } from "../components/dashboard/EvolutionChart";
 import { LabAlerts } from "../components/dashboard/LabAlerts";
-import { formatDate, formatDecimal, formatOptional } from "../helpers";
+import { formatDate, formatDecimal } from "../helpers";
 import type { Notice } from "../helpers";
 import type {
   AnthropometryEntry,
@@ -198,7 +198,6 @@ export function PatientDashboardPage() {
                       <th>Data</th>
                       <th>Exame</th>
                       <th>Valor</th>
-                      <th>Alerta</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -214,7 +213,6 @@ export function PatientDashboardPage() {
                           <td>{formatDate(result.collection_date)}</td>
                           <td>{definitionMap.get(result.test_definition_id)?.name ?? "Desconhecido"}</td>
                           <td>{formatDecimal(result.value)}</td>
-                          <td>{result.flag ?? "-"}</td>
                         </tr>
                       ))
                     )}
