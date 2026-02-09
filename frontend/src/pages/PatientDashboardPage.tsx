@@ -7,28 +7,10 @@ import { EvolutionChart } from "../components/dashboard/EvolutionChart";
 import { LabAlerts } from "../components/dashboard/LabAlerts";
 import { formatDate, formatDecimal } from "../helpers";
 import type { Notice } from "../helpers";
-import type {
-  AnthropometryEntry,
-  BioimpedanceEntry,
-  LabResult,
-  LabTestDefinition,
-  SubjectiveEntry,
-} from "../types";
+import type { LabTestDefinition } from "../types";
 import type { PatientRouteContext } from "./PatientRouteLayout";
 
-type DashboardData = {
-  labResults: LabResult[];
-  bioimpedanceEntries: BioimpedanceEntry[];
-  anthropometryEntries: AnthropometryEntry[];
-  subjectiveEntries: SubjectiveEntry[];
-};
 
-const emptyData: DashboardData = {
-  labResults: [],
-  bioimpedanceEntries: [],
-  anthropometryEntries: [],
-  subjectiveEntries: [],
-};
 
 export function PatientDashboardPage() {
   const { patientId, patient } = useOutletContext<PatientRouteContext>();
