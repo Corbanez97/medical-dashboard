@@ -1,10 +1,11 @@
-﻿import { useEffect, useMemo, useState } from "react";
+﻿import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useOutletContext } from "react-router-dom";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
 import { EvolutionChart } from "../components/dashboard/EvolutionChart";
 import { LabAlerts } from "../components/dashboard/LabAlerts";
-import { formatDate, formatDecimal, formatOptional } from "../helpers";
+import { formatDate, formatDecimal } from "../helpers";
 import type { Notice } from "../helpers";
 import type {
   AnthropometryEntry,
@@ -32,70 +33,73 @@ const emptyData: DashboardData = {
 export function PatientDashboardPage() {
   const { patientId, patient } = useOutletContext<PatientRouteContext>();
 
-  const [definitions, setDefinitions] = useState<LabTestDefinition[]>([]);
-  const [data, setData] = useState<DashboardData>(emptyData);
-  const [loading, setLoading] = useState(true);
-  const [notice, setNotice] = useState<Notice | null>(null);
+  /*
+   * REACT QUERY:
+   * We fetch all data in parallel using useQuery.
+   * Since there are multiple dependent queries, we can use multiple useQuery hooks or better yet,
+   * a single useQuery that fetches everything if we want them to load together (like Promise.all).
+   *
+   * For simplicity and to keep the "one loading state" behavior without waterfalls, we can do a single query.
+   * Alternatively, separate queries would allow parts of the UI to load independently.
+   * Given the current UI structure (NoticeBanner, then content), a single query is easier to migrate to.
+   */
 
-  useEffect(() => {
-    let active = true;
+  const { data, isLoading: loading, error } = useQuery({
+    queryKey: ["patient-dashboard", patientId],
+    queryFn: async () => {
+      const [labDefinitions, labResults, bioimpedanceEntries, anthropometryEntries, subjectiveEntries] = await Promise.all([
+        medicalApi.listLabDefinitions(),
+        medicalApi.listPatientLabResults(patientId),
+        medicalApi.listPatientBioimpedance(patientId),
+        medicalApi.listPatientAnthropometry(patientId),
+        medicalApi.listPatientSubjectiveEntries(patientId),
+      ]);
 
-    const load = async () => {
-      setLoading(true);
-      setNotice(null);
-      try {
-        const [labDefinitions, labResults, bioimpedanceEntries, anthropometryEntries, subjectiveEntries] = await Promise.all([
-          medicalApi.listLabDefinitions(),
-          medicalApi.listPatientLabResults(patientId),
-          medicalApi.listPatientBioimpedance(patientId),
-          medicalApi.listPatientAnthropometry(patientId),
-          medicalApi.listPatientSubjectiveEntries(patientId),
-        ]);
+      return {
+        definitions: labDefinitions,
+        labResults,
+        bioimpedanceEntries,
+        anthropometryEntries,
+        subjectiveEntries,
+      };
+    },
+  });
 
-        if (!active) {
-          return;
-        }
-
-        setDefinitions(labDefinitions);
-        setData({ labResults, bioimpedanceEntries, anthropometryEntries, subjectiveEntries });
-      } catch (error) {
-        if (!active) {
-          return;
-        }
-        const message = error instanceof Error ? error.message : "Erro desconhecido";
-        setNotice({ kind: "error", message: `Não foi possível carregar dados do painel: ${message}` });
-      } finally {
-        if (active) {
-          setLoading(false);
-        }
-      }
+  // Extract data with safe defaults
+  const definitions = data?.definitions ?? [];
+  const dashboardData = useMemo(() => {
+    return {
+      labResults: data?.labResults ?? [],
+      bioimpedanceEntries: data?.bioimpedanceEntries ?? [],
+      anthropometryEntries: data?.anthropometryEntries ?? [],
+      subjectiveEntries: data?.subjectiveEntries ?? [],
     };
+  }, [data]);
 
-    void load();
-    return () => {
-      active = false;
-    };
-  }, [patientId]);
+  // Handle errors (we can't easily use state for notice inside render, so we just derive it)
+  const notice: Notice | null = error
+    ? { kind: "error", message: `Não foi possível carregar dados do painel: ${error instanceof Error ? error.message : "Erro desconhecido"}` }
+    : null;
 
   const definitionMap = useMemo(() => {
     return new Map<number, LabTestDefinition>(definitions.map((definition) => [definition.id, definition]));
   }, [definitions]);
 
   const sortedLabs = useMemo(
-    () => [...data.labResults].sort((left, right) => right.collection_date.localeCompare(left.collection_date)),
-    [data.labResults],
+    () => [...dashboardData.labResults].sort((left, right) => right.collection_date.localeCompare(left.collection_date)),
+    [dashboardData.labResults],
   );
   const sortedBio = useMemo(
-    () => [...data.bioimpedanceEntries].sort((left, right) => right.date.localeCompare(left.date)),
-    [data.bioimpedanceEntries],
+    () => [...dashboardData.bioimpedanceEntries].sort((left, right) => right.date.localeCompare(left.date)),
+    [dashboardData.bioimpedanceEntries],
   );
   const sortedAnthro = useMemo(
-    () => [...data.anthropometryEntries].sort((left, right) => right.date.localeCompare(left.date)),
-    [data.anthropometryEntries],
+    () => [...dashboardData.anthropometryEntries].sort((left, right) => right.date.localeCompare(left.date)),
+    [dashboardData.anthropometryEntries],
   );
   const sortedSubjective = useMemo(
-    () => [...data.subjectiveEntries].sort((left, right) => right.date.localeCompare(left.date)),
-    [data.subjectiveEntries],
+    () => [...dashboardData.subjectiveEntries].sort((left, right) => right.date.localeCompare(left.date)),
+    [dashboardData.subjectiveEntries],
   );
 
   const latestBio = sortedBio[0] ?? null;
@@ -103,21 +107,21 @@ export function PatientDashboardPage() {
 
   // Prepare chart data
   const weightData = useMemo(() => {
-    return data.bioimpedanceEntries.map((entry) => ({
+    return dashboardData.bioimpedanceEntries.map((entry) => ({
       date: entry.date,
       weight: entry.weight_kg,
       muscle: entry.muscle_mass_kg,
       fat: entry.fat_mass_kg,
     }));
-  }, [data.bioimpedanceEntries]);
+  }, [dashboardData.bioimpedanceEntries]);
 
   const compositionData = useMemo(() => {
-    return data.bioimpedanceEntries.map((entry) => ({
+    return dashboardData.bioimpedanceEntries.map((entry) => ({
       date: entry.date,
       fat_percent: entry.body_fat_percent,
       hydration: entry.hydration_percent ?? 0,
     }));
-  }, [data.bioimpedanceEntries]);
+  }, [dashboardData.bioimpedanceEntries]);
 
   return (
     <div className="stack-gap">
@@ -163,7 +167,7 @@ export function PatientDashboardPage() {
             </div>
           </section>
 
-          <LabAlerts results={data.labResults} definitions={definitions} patient={patient} />
+          <LabAlerts results={dashboardData.labResults} definitions={definitions} patient={patient} />
 
           <section className="grid-two">
             <EvolutionChart
@@ -194,7 +198,6 @@ export function PatientDashboardPage() {
                       <th>Data</th>
                       <th>Exame</th>
                       <th>Valor</th>
-                      <th>Alerta</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -210,7 +213,6 @@ export function PatientDashboardPage() {
                           <td>{formatDate(result.collection_date)}</td>
                           <td>{definitionMap.get(result.test_definition_id)?.name ?? "Desconhecido"}</td>
                           <td>{formatDecimal(result.value)}</td>
-                          <td>{result.flag ?? "-"}</td>
                         </tr>
                       ))
                     )}
