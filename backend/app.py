@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List
@@ -18,6 +19,20 @@ from schemas import (
 )
 
 app = FastAPI(title="Medical Dashboard API")
+
+origins = [
+    "http://localhost:5174",          
+    "http://localhost:3000",          
+    "https://medical-dashboard-opal.vercel.app",                            
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            
+    allow_credentials=True,
+    allow_methods=["*"],              
+    allow_headers=["*"], 
+)             
 
 @app.on_event("startup")
 async def startup():
