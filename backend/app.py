@@ -23,7 +23,7 @@ app = FastAPI(title="Medical Dashboard API")
 origins = [
     "http://localhost:5174",          
     "http://localhost:3000",          
-    "https://medical-dashboard-opal.vercel.app",                            
+    "http://medical-dashboard-tatsch.vercel.app",                            
 ]
 
 app.add_middleware(
