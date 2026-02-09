@@ -9,28 +9,34 @@ import { PatientRouteLayout } from "./pages/PatientRouteLayout";
 import { PatientsPage } from "./pages/PatientsPage";
 import { PatientSubjectivePage } from "./pages/PatientSubjectivePage";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <BrowserRouter>
-      <SidebarLayout>
-        <Routes>
-          <Route path="/" element={<Navigate to="/patients" replace />} />
-          <Route path="/patients" element={<PatientsPage />} />
-          <Route path="/lab-definitions" element={<LabDefinitionsPage />} />
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <SidebarLayout>
+          <Routes>
+            <Route path="/" element={<Navigate to="/patients" replace />} />
+            <Route path="/patients" element={<PatientsPage />} />
+            <Route path="/lab-definitions" element={<LabDefinitionsPage />} />
 
-          <Route path="/patients/:patientId" element={<PatientRouteLayout />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<PatientDashboardPage />} />
-            <Route path="labs" element={<PatientLabsPage />} />
-            <Route path="bioimpedance" element={<PatientBioimpedancePage />} />
-            <Route path="anthropometry" element={<PatientAnthropometryPage />} />
-            <Route path="subjective" element={<PatientSubjectivePage />} />
-          </Route>
+            <Route path="/patients/:patientId" element={<PatientRouteLayout />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<PatientDashboardPage />} />
+              <Route path="labs" element={<PatientLabsPage />} />
+              <Route path="bioimpedance" element={<PatientBioimpedancePage />} />
+              <Route path="anthropometry" element={<PatientAnthropometryPage />} />
+              <Route path="subjective" element={<PatientSubjectivePage />} />
+            </Route>
 
-          <Route path="*" element={<Navigate to="/patients" replace />} />
-        </Routes>
-      </SidebarLayout>
-    </BrowserRouter>
+            <Route path="*" element={<Navigate to="/patients" replace />} />
+          </Routes>
+        </SidebarLayout>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 }
 
