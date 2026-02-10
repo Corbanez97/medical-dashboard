@@ -1,11 +1,11 @@
 from pydantic import BaseModel, ConfigDict
-from datetime import date, datetime
+from datetime import date as DateType, datetime
 from typing import List, Optional
 
 # --- Patient Schemas ---
 class PatientBase(BaseModel):
     full_name: str
-    date_of_birth: date
+    date_of_birth: DateType
     gender: str
     height_cm: float
 
@@ -14,7 +14,7 @@ class PatientCreate(PatientBase):
 
 class PatientUpdate(BaseModel):
     full_name: Optional[str] = None
-    date_of_birth: Optional[date] = None
+    date_of_birth: Optional[DateType] = None
     gender: Optional[str] = None
     height_cm: Optional[float] = None
 
@@ -55,7 +55,7 @@ class LabTestDefinition(LabTestDefinitionBase):
 class LabResultBase(BaseModel):
     patient_id: int
     test_definition_id: int
-    collection_date: date
+    collection_date: DateType
     value: float
     flag: Optional[str] = None
 
@@ -65,7 +65,7 @@ class LabResultCreate(LabResultBase):
 class LabResultUpdate(BaseModel):
     patient_id: Optional[int] = None
     test_definition_id: Optional[int] = None
-    collection_date: Optional[date] = None
+    collection_date: Optional[DateType] = None
     value: Optional[float] = None
     flag: Optional[str] = None
 
@@ -81,7 +81,7 @@ class LabResult(LabResultBase):
 # --- BioimpedanceEntry Schemas ---
 class BioimpedanceEntryBase(BaseModel):
     patient_id: int
-    date: date
+    date: DateType
     weight_kg: float
     bmi: float
     body_fat_percent: float
@@ -96,7 +96,7 @@ class BioimpedanceEntryCreate(BioimpedanceEntryBase):
 
 class BioimpedanceEntryUpdate(BaseModel):
     patient_id: Optional[int] = None
-    date: Optional[date] = None
+    date: Optional[DateType] = None
     weight_kg: Optional[float] = None
     bmi: Optional[float] = None
     body_fat_percent: Optional[float] = None
@@ -114,7 +114,7 @@ class BioimpedanceEntry(BioimpedanceEntryBase):
 # --- AnthropometryEntry Schemas ---
 class AnthropometryEntryBase(BaseModel):
     patient_id: int
-    date: date
+    date: DateType
     waist_cm: Optional[float] = None
     abdomen_cm: Optional[float] = None
     hips_cm: Optional[float] = None
@@ -128,7 +128,7 @@ class AnthropometryEntryCreate(AnthropometryEntryBase):
 
 class AnthropometryEntryUpdate(BaseModel):
     patient_id: Optional[int] = None
-    date: Optional[date] = None
+    date: Optional[DateType] = None
     waist_cm: Optional[float] = None
     abdomen_cm: Optional[float] = None
     hips_cm: Optional[float] = None
@@ -145,7 +145,7 @@ class AnthropometryEntry(AnthropometryEntryBase):
 # --- SubjectiveEntry Schemas ---
 class SubjectiveEntryBase(BaseModel):
     patient_id: int
-    date: date
+    date: DateType
     metric_name: str
     score: int
     notes: Optional[str] = None
@@ -155,7 +155,7 @@ class SubjectiveEntryCreate(SubjectiveEntryBase):
 
 class SubjectiveEntryUpdate(BaseModel):
     patient_id: Optional[int] = None
-    date: Optional[date] = None
+    date: Optional[DateType] = None
     metric_name: Optional[str] = None
     score: Optional[int] = None
     notes: Optional[str] = None

@@ -128,14 +128,14 @@ export function PatientBioimpedancePage() {
     setEditingItem(entry);
     setEditForm({
       date: entry.date,
-      weight_kg: String(entry.weight_kg),
-      bmi: String(entry.bmi),
-      body_fat_percent: String(entry.body_fat_percent),
-      fat_mass_kg: String(entry.fat_mass_kg),
-      muscle_mass_kg: String(entry.muscle_mass_kg),
-      visceral_fat_level: entry.visceral_fat_level !== null ? String(entry.visceral_fat_level) : "",
+      weight_kg: entry.weight_kg.toFixed(2),
+      bmi: entry.bmi.toFixed(2),
+      body_fat_percent: entry.body_fat_percent.toFixed(2),
+      fat_mass_kg: entry.fat_mass_kg.toFixed(2),
+      muscle_mass_kg: entry.muscle_mass_kg.toFixed(2),
+      visceral_fat_level: entry.visceral_fat_level !== null ? entry.visceral_fat_level.toFixed(2) : "",
       basal_metabolic_rate_kcal: entry.basal_metabolic_rate_kcal !== null ? String(entry.basal_metabolic_rate_kcal) : "",
-      hydration_percent: entry.hydration_percent !== null ? String(entry.hydration_percent) : "",
+      hydration_percent: entry.hydration_percent !== null ? entry.hydration_percent.toFixed(2) : "",
     });
   };
 
@@ -147,6 +147,7 @@ export function PatientBioimpedancePage() {
     const run = async () => {
       try {
         const payload: Partial<BioimpedanceEntryCreate> = {
+          patient_id: editingItem.patient_id,
           date: editForm.date,
           weight_kg: parseRequiredNumber(editForm.weight_kg, "Peso"),
           bmi: parseRequiredNumber(editForm.bmi, "IMC"),
@@ -168,7 +169,7 @@ export function PatientBioimpedancePage() {
       } finally {
         setUpdating(false);
       }
-    }
+    };
     void run();
   };
 

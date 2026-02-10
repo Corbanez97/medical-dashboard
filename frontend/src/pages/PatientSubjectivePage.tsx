@@ -140,6 +140,7 @@ export function PatientSubjectivePage() {
         }
 
         const payload: Partial<SubjectiveEntryCreate> = {
+          patient_id: editingItem.patient_id,
           date: editForm.date,
           metric_name: editForm.metric_name.trim(),
           score,
@@ -156,7 +157,7 @@ export function PatientSubjectivePage() {
       } finally {
         setUpdating(false);
       }
-    }
+    };
     void run();
   };
 

@@ -124,13 +124,13 @@ export function PatientAnthropometryPage() {
     setEditingItem(entry);
     setEditForm({
       date: entry.date,
-      waist_cm: entry.waist_cm !== null ? String(entry.waist_cm) : "",
-      abdomen_cm: entry.abdomen_cm !== null ? String(entry.abdomen_cm) : "",
-      hips_cm: entry.hips_cm !== null ? String(entry.hips_cm) : "",
-      right_arm_cm: entry.right_arm_cm !== null ? String(entry.right_arm_cm) : "",
-      left_arm_cm: entry.left_arm_cm !== null ? String(entry.left_arm_cm) : "",
-      right_thigh_cm: entry.right_thigh_cm !== null ? String(entry.right_thigh_cm) : "",
-      left_thigh_cm: entry.left_thigh_cm !== null ? String(entry.left_thigh_cm) : "",
+      waist_cm: entry.waist_cm !== null ? entry.waist_cm.toFixed(2) : "",
+      abdomen_cm: entry.abdomen_cm !== null ? entry.abdomen_cm.toFixed(2) : "",
+      hips_cm: entry.hips_cm !== null ? entry.hips_cm.toFixed(2) : "",
+      right_arm_cm: entry.right_arm_cm !== null ? entry.right_arm_cm.toFixed(2) : "",
+      left_arm_cm: entry.left_arm_cm !== null ? entry.left_arm_cm.toFixed(2) : "",
+      right_thigh_cm: entry.right_thigh_cm !== null ? entry.right_thigh_cm.toFixed(2) : "",
+      left_thigh_cm: entry.left_thigh_cm !== null ? entry.left_thigh_cm.toFixed(2) : "",
     });
   };
 
@@ -142,6 +142,7 @@ export function PatientAnthropometryPage() {
     const run = async () => {
       try {
         const payload: Partial<AnthropometryEntryCreate> = {
+          patient_id: editingItem.patient_id,
           date: editForm.date,
           waist_cm: parseOptionalNumber(editForm.waist_cm, "Cintura"),
           abdomen_cm: parseOptionalNumber(editForm.abdomen_cm, "Abdômen"),
@@ -155,14 +156,14 @@ export function PatientAnthropometryPage() {
         await medicalApi.updateAnthropometryEntry(editingItem.id, payload);
         await loadEntries();
         setEditingItem(null);
-        setNotice({ kind: "success", message: "Registro altrado com sucesso." });
+        setNotice({ kind: "success", message: "Registro alterado com sucesso." });
       } catch (error) {
         const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
         setUpdating(false);
       }
-    }
+    };
     void run();
   };
 
