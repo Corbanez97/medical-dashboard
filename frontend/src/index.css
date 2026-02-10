@@ -264,6 +264,20 @@ a:hover {
   background-color: #FEE2E2;
 }
 
+.button-icon {
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 /* Inputs */
 .input {
   width: 100%;

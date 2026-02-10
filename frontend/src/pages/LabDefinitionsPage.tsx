@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { Edit } from "lucide-react";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
 import { parseOptionalNumber } from "../helpers";
@@ -176,11 +177,11 @@ export function LabDefinitionsPage() {
                         </td>
                         <td>
                           <button
-                            className="button button--outline"
-                            style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
+                            className="button button--outline button-icon"
+                            title="Editar Definição"
                             onClick={() => startEdit(definition)}
                           >
-                            Editar
+                            <Edit />
                           </button>
                         </td>
                       </tr>
