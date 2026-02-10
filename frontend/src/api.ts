@@ -64,7 +64,7 @@ export const medicalApi = {
     request<LabTestDefinition[]>(`/lab-definitions/?skip=${skip}&limit=${limit}`),
   createLabDefinition: (payload: LabTestDefinitionCreate) =>
     request<LabTestDefinition>("/lab-definitions/", "POST", payload),
-  updateLabDefinition: (id: number, payload: LabTestDefinitionCreate) =>
+  updateLabDefinition: (id: number, payload: Partial<LabTestDefinitionCreate>) =>
     request<LabTestDefinition>(`/lab-definitions/${id}`, "PUT", payload),
 
   createLabResult: (payload: LabResultCreate) => request<LabResult>("/lab-results/", "POST", payload),
@@ -84,4 +84,23 @@ export const medicalApi = {
     request<SubjectiveEntry>("/subjective/", "POST", payload),
   listPatientSubjectiveEntries: (patientId: number) =>
     request<SubjectiveEntry[]>(`/patients/${patientId}/subjective/`),
+
+  // NEW METHODS
+  updateLabResult: (id: number, payload: Partial<LabResultCreate>) =>
+    request<LabResult>(`/lab-results/${id}`, "PUT", payload),
+  deleteLabResult: (id: number) => request<void>(`/lab-results/${id}`, "DELETE"),
+
+  deleteLabDefinition: (id: number) => request<void>(`/lab-definitions/${id}`, "DELETE"),
+
+  updateBioimpedanceEntry: (id: number, payload: Partial<BioimpedanceEntryCreate>) =>
+    request<BioimpedanceEntry>(`/bioimpedance/${id}`, "PUT", payload),
+  deleteBioimpedanceEntry: (id: number) => request<void>(`/bioimpedance/${id}`, "DELETE"),
+
+  updateAnthropometryEntry: (id: number, payload: Partial<AnthropometryEntryCreate>) =>
+    request<AnthropometryEntry>(`/anthropometry/${id}`, "PUT", payload),
+  deleteAnthropometryEntry: (id: number) => request<void>(`/anthropometry/${id}`, "DELETE"),
+
+  updateSubjectiveEntry: (id: number, payload: Partial<SubjectiveEntryCreate>) =>
+    request<SubjectiveEntry>(`/subjective/${id}`, "PUT", payload),
+  deleteSubjectiveEntry: (id: number) => request<void>(`/subjective/${id}`, "DELETE"),
 };

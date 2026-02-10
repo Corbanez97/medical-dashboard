@@ -172,7 +172,7 @@ export function PatientDashboardPage() {
 
           <section className="grid-two">
             <div className="page-card stack-gap-sm">
-              <h4>Resultados de Exames Recentes</h4>
+              <h4>Exames Recentes</h4>
               <div className="table-wrap" style={{ border: "none" }}>
                 <table>
                   <thead>

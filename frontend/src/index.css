@@ -159,6 +159,7 @@ a:hover {
   padding: 2rem;
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.3s ease;
+  min-width: 0;
 }
 
 .page-card:hover {
@@ -263,6 +264,20 @@ a:hover {
   background-color: #FEE2E2;
 }
 
+.button-icon {
+  padding: 0.5rem;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 /* Inputs */
 .input {
   width: 100%;
@@ -339,6 +354,7 @@ td {
   padding: 1.25rem;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 th {
@@ -552,4 +568,127 @@ tr:hover td {
 .tab-link.active {
   color: var(--primary);
   border-bottom-color: var(--primary);
+}
+
+/* --- Mobile Responsiveness --- */
+
+/* Mobile Header (Hidden on Desktop) */
+.mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #1A1A1A;
+  color: #fff;
+  border-bottom: 1px solid rgba(184, 134, 11, 0.2);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 90;
+  height: 60px;
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-logo {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 95;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-header {
+    display: flex;
+  }
+
+  .mobile-overlay.active {
+    display: block;
+  }
+
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px !important;
+    /* Force full width sidebar on mobile when open */
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-toggle {
+    display: none;
+    /* Hide desktop toggle on mobile */
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    /* Override inline style from JS */
+    padding: 1.5rem;
+    padding-top: 5rem;
+    /* Space for mobile header */
+    width: 100% !important;
+  }
+
+  /* Adjust metrics grid for mobile */
+  .grid-two {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sub-nav {
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .split-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .split-row>* {
+    width: 100%;
+  }
+
+  .split-row .button {
+    width: 100%;
+  }
 }

@@ -12,7 +12,7 @@ export type PatientRouteContext = {
 
 const links = [
   { path: "dashboard", label: "Painel" },
-  { path: "labs", label: "Resultados de Exames" },
+  { path: "labs", label: "Exames" },
   { path: "bioimpedance", label: "Bioimpedância" },
   { path: "anthropometry", label: "Antropometria" },
   { path: "subjective", label: "Subjetivo" },

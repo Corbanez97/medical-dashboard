@@ -1,5 +1,6 @@
 ﻿import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Edit, FolderOpen, Trash2 } from "lucide-react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { medicalApi } from "../api";
@@ -215,30 +216,30 @@ export function PatientsPage() {
                         <td>{patient.gender}</td>
                         <td>{patient.height_cm} cm</td>
                         <td style={{ textAlign: "right" }}>
-                          <div className="button-row" style={{ justifyContent: "flex-end" }}>
+                          <div className="button-row" style={{ justifyContent: "flex-end", display: "flex", gap: "0.5rem" }}>
                             <button
                               type="button"
-                              className="button button--outline"
-                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              className="button button--outline button-icon"
+                              title="Abrir Dashboard"
                               onClick={() => navigate(`/patients/${patient.id}/dashboard`)}
                             >
-                              Abrir
+                              <FolderOpen />
                             </button>
                             <button
                               type="button"
-                              className="button button--outline"
-                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              className="button button--outline button-icon"
+                              title="Editar Paciente"
                               onClick={() => startEdit(patient)}
                             >
-                              Editar
+                              <Edit />
                             </button>
                             <button
                               type="button"
-                              className="button button--danger"
-                              style={{ padding: "0.4rem 0.8rem", fontSize: "0.85rem" }}
+                              className="button button--danger button-icon"
+                              title="Excluir Paciente"
                               onClick={() => onDeletePatient(patient)}
                             >
-                              Excluir
+                              <Trash2 />
                             </button>
                           </div>
                         </td>

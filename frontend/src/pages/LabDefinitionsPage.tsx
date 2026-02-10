@@ -1,7 +1,9 @@
 ﻿import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { Edit, Trash2 } from "lucide-react";
 import { medicalApi } from "../api";
 import { NoticeBanner } from "../components/common/NoticeBanner";
+import { Modal } from "../components/common/Modal";
 import { parseOptionalNumber } from "../helpers";
 import type { Notice } from "../helpers";
 import type { LabTestDefinition, LabTestDefinitionCreate } from "../types";
@@ -28,11 +30,21 @@ const emptyForm: FormState = {
 
 export function LabDefinitionsPage() {
   const [definitions, setDefinitions] = useState<LabTestDefinition[]>([]);
-  const [form, setForm] = useState<FormState>(emptyForm);
-  const [editingId, setEditingId] = useState<number | null>(null); // New state for editing
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<Notice | null>(null);
+
+  // Create State
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<FormState>(emptyForm);
+  const [creating, setCreating] = useState(false);
+
+  // Edit State
+  const [editingItem, setEditingItem] = useState<LabTestDefinition | null>(null);
+  const [editForm, setEditForm] = useState<FormState>(emptyForm);
+  const [updating, setUpdating] = useState(false);
+
+  // Delete State
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const loadDefinitions = async () => {
     const loaded = await medicalApi.listLabDefinitions();
@@ -49,15 +61,11 @@ export function LabDefinitionsPage() {
           setDefinitions(loaded);
         }
       } catch (error) {
-        if (!active) {
-          return;
-        }
+        if (!active) return;
         const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message: `Não foi possível carregar definições: ${message}` });
       } finally {
-        if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     };
 
@@ -67,9 +75,45 @@ export function LabDefinitionsPage() {
     };
   }, []);
 
+  const handleCreate = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setCreating(true);
+
+    const run = async () => {
+      try {
+        const payload: LabTestDefinitionCreate = {
+          name: createForm.name.trim(),
+          category: createForm.category.trim(),
+          unit: createForm.unit.trim(),
+          ref_min_male: parseOptionalNumber(createForm.ref_min_male, "Mín. Masculino"),
+          ref_max_male: parseOptionalNumber(createForm.ref_max_male, "Máx. Masculino"),
+          ref_min_female: parseOptionalNumber(createForm.ref_min_female, "Mín. Feminino"),
+          ref_max_female: parseOptionalNumber(createForm.ref_max_female, "Máx. Feminino"),
+        };
+
+        if (!payload.name || !payload.category || !payload.unit) {
+          throw new Error("Nome, categoria e unidade são obrigatórios.");
+        }
+
+        await medicalApi.createLabDefinition(payload);
+        setCreateForm(emptyForm);
+        setIsCreateOpen(false);
+        await loadDefinitions();
+        setNotice({ kind: "success", message: "Definição criada." });
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Erro desconhecido";
+        setNotice({ kind: "error", message });
+      } finally {
+        setCreating(false);
+      }
+    };
+
+    void run();
+  };
+
   const startEdit = (def: LabTestDefinition) => {
-    setEditingId(def.id);
-    setForm({
+    setEditingItem(def);
+    setEditForm({
       name: def.name,
       category: def.category,
       unit: def.unit,
@@ -78,67 +122,72 @@ export function LabDefinitionsPage() {
       ref_min_female: def.ref_min_female?.toString() ?? "",
       ref_max_female: def.ref_max_female?.toString() ?? "",
     });
-    // Scroll to form (optional UX improvement)
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setForm(emptyForm);
-  };
-
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleUpdate = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!editingItem) return;
+    setUpdating(true);
 
     const run = async () => {
-      setSaving(true);
       try {
-        const payload: LabTestDefinitionCreate = {
-          name: form.name.trim(),
-          category: form.category.trim(),
-          unit: form.unit.trim(),
-          ref_min_male: parseOptionalNumber(form.ref_min_male, "Mín. Masculino"),
-          ref_max_male: parseOptionalNumber(form.ref_max_male, "Máx. Masculino"),
-          ref_min_female: parseOptionalNumber(form.ref_min_female, "Mín. Feminino"),
-          ref_max_female: parseOptionalNumber(form.ref_max_female, "Máx. Feminino"),
+        const payload: Partial<LabTestDefinitionCreate> = {
+          name: editForm.name.trim(),
+          category: editForm.category.trim(),
+          unit: editForm.unit.trim(),
+          ref_min_male: parseOptionalNumber(editForm.ref_min_male, "Mín. Masculino"),
+          ref_max_male: parseOptionalNumber(editForm.ref_max_male, "Máx. Masculino"),
+          ref_min_female: parseOptionalNumber(editForm.ref_min_female, "Mín. Feminino"),
+          ref_max_female: parseOptionalNumber(editForm.ref_max_female, "Máx. Feminino"),
         };
 
-        if (!payload.name || !payload.category || !payload.unit) {
-          throw new Error("Nome, categoria e unidade são obrigatórios.");
-        }
-
-        if (editingId !== null) {
-          await medicalApi.updateLabDefinition(editingId, payload);
-          setNotice({ kind: "success", message: "Definição atualizada." });
-        } else {
-          await medicalApi.createLabDefinition(payload);
-          setNotice({ kind: "success", message: "Definição criada." });
-        }
-
-        setForm(emptyForm);
-        setEditingId(null);
+        await medicalApi.updateLabDefinition(editingItem.id, payload);
         await loadDefinitions();
+        setEditingItem(null);
+        setNotice({ kind: "success", message: "Definição atualizada." });
       } catch (error) {
         const message = error instanceof Error ? error.message : "Erro desconhecido";
         setNotice({ kind: "error", message });
       } finally {
-        setSaving(false);
+        setUpdating(false);
       }
-    };
-
+    }
     void run();
   };
 
+  const handleDelete = async (id: number) => {
+    if (!window.confirm("Tem certeza que deseja excluir esta definição?")) return;
+    setDeletingId(id);
+    try {
+      await medicalApi.deleteLabDefinition(id);
+      await loadDefinitions();
+      setNotice({ kind: "success", message: "Definição excluída." });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erro desconhecido";
+      setNotice({ kind: "error", message });
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
-    <section className="grid-two stack-gap">
-      <article className="page-card stack-gap">
-        <div className="split-row">
+    <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <header className="split-row" style={{ paddingBottom: "1rem", borderBottom: "1px solid var(--border)" }}>
+        <div>
           <h2>Definições de Exames</h2>
           <span className="muted-text">{definitions.length} itens</span>
         </div>
+        <button
+          className="button button--primary"
+          onClick={() => setIsCreateOpen(true)}
+        >
+          + Nova Definição
+        </button>
+      </header>
 
-        <NoticeBanner notice={notice} />
+      <NoticeBanner notice={notice} />
 
+      <div className="page-card">
         {loading ? (
           <p className="muted-text">Carregando definições...</p>
         ) : (
@@ -151,7 +200,7 @@ export function LabDefinitionsPage() {
                   <th>Unidade</th>
                   <th>Ref. Masculino</th>
                   <th>Ref. Feminino</th>
-                  <th>Ação</th>
+                  <th style={{ textAlign: "right" }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
@@ -173,14 +222,24 @@ export function LabDefinitionsPage() {
                       <td>
                         {definition.ref_min_female ?? "-"} a {definition.ref_max_female ?? "-"}
                       </td>
-                      <td>
-                        <button
-                          className="button button--outline"
-                          style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
-                          onClick={() => startEdit(definition)}
-                        >
-                          Editar
-                        </button>
+                      <td style={{ textAlign: "right" }}>
+                        <div className="button-row" style={{ justifyContent: "flex-end", display: "flex", gap: "0.5rem" }}>
+                          <button
+                            className="button button--icon"
+                            onClick={() => startEdit(definition)}
+                            title="Editar"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            className="button button--icon button--danger"
+                            onClick={() => handleDelete(definition.id)}
+                            disabled={deletingId === definition.id}
+                            title="Excluir"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
@@ -189,22 +248,21 @@ export function LabDefinitionsPage() {
             </table>
           </div>
         )}
-      </article>
+      </div>
 
-      <article className="page-card stack-gap">
-        <div className="split-row">
-          <h2>{editingId ? "Editar Definição" : "Criar Definição"}</h2>
-          {editingId && (
-            <button className="button button--outline" onClick={cancelEdit}>Cancelar Edição</button>
-          )}
-        </div>
-        <form className="form-grid" onSubmit={onSubmit}>
+      {/* CREATE MODAL */}
+      <Modal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        title="Nova Definição de Exame"
+      >
+        <form className="form-grid" onSubmit={handleCreate}>
           <label>
             Nome do Exame
             <input
               className="input"
-              value={form.name}
-              onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+              value={createForm.name}
+              onChange={(event) => setCreateForm((current) => ({ ...current, name: event.target.value }))}
               required
             />
           </label>
@@ -212,8 +270,8 @@ export function LabDefinitionsPage() {
             Categoria
             <input
               className="input"
-              value={form.category}
-              onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
+              value={createForm.category}
+              onChange={(event) => setCreateForm((current) => ({ ...current, category: event.target.value }))}
               required
             />
           </label>
@@ -221,8 +279,8 @@ export function LabDefinitionsPage() {
             Unidade
             <input
               className="input"
-              value={form.unit}
-              onChange={(event) => setForm((current) => ({ ...current, unit: event.target.value }))}
+              value={createForm.unit}
+              onChange={(event) => setCreateForm((current) => ({ ...current, unit: event.target.value }))}
               required
             />
           </label>
@@ -234,8 +292,8 @@ export function LabDefinitionsPage() {
                 className="input"
                 type="number"
                 step="0.01"
-                value={form.ref_min_male}
-                onChange={(event) => setForm((current) => ({ ...current, ref_min_male: event.target.value }))}
+                value={createForm.ref_min_male}
+                onChange={(event) => setCreateForm((current) => ({ ...current, ref_min_male: event.target.value }))}
               />
             </label>
             <label>
@@ -244,8 +302,8 @@ export function LabDefinitionsPage() {
                 className="input"
                 type="number"
                 step="0.01"
-                value={form.ref_max_male}
-                onChange={(event) => setForm((current) => ({ ...current, ref_max_male: event.target.value }))}
+                value={createForm.ref_max_male}
+                onChange={(event) => setCreateForm((current) => ({ ...current, ref_max_male: event.target.value }))}
               />
             </label>
             <label>
@@ -254,8 +312,8 @@ export function LabDefinitionsPage() {
                 className="input"
                 type="number"
                 step="0.01"
-                value={form.ref_min_female}
-                onChange={(event) => setForm((current) => ({ ...current, ref_min_female: event.target.value }))}
+                value={createForm.ref_min_female}
+                onChange={(event) => setCreateForm((current) => ({ ...current, ref_min_female: event.target.value }))}
               />
             </label>
             <label>
@@ -264,19 +322,111 @@ export function LabDefinitionsPage() {
                 className="input"
                 type="number"
                 step="0.01"
-                value={form.ref_max_female}
-                onChange={(event) => setForm((current) => ({ ...current, ref_max_female: event.target.value }))}
+                value={createForm.ref_max_female}
+                onChange={(event) => setCreateForm((current) => ({ ...current, ref_max_female: event.target.value }))}
               />
             </label>
           </div>
 
-          <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Salvando..." : (editingId ? "Atualizar Definição" : "Criar Definição")}
-          </button>
+          <div className="split-row" style={{ marginTop: "1rem" }}>
+            <button type="button" className="button button--outline" onClick={() => setIsCreateOpen(false)}>
+              Cancelar
+            </button>
+            <button className="button button--primary" type="submit" disabled={creating}>
+              {creating ? "Salvando..." : "Salvar"}
+            </button>
+          </div>
         </form>
-      </article>
-    </section>
+      </Modal>
+
+      {/* EDIT MODAL */}
+      <Modal
+        isOpen={!!editingItem}
+        onClose={() => setEditingItem(null)}
+        title="Editar Definição de Exame"
+      >
+        <form className="form-grid" onSubmit={handleUpdate}>
+          <label>
+            Nome do Exame
+            <input
+              className="input"
+              value={editForm.name}
+              onChange={(event) => setEditForm((current) => ({ ...current, name: event.target.value }))}
+              required
+            />
+          </label>
+          <label>
+            Categoria
+            <input
+              className="input"
+              value={editForm.category}
+              onChange={(event) => setEditForm((current) => ({ ...current, category: event.target.value }))}
+              required
+            />
+          </label>
+          <label>
+            Unidade
+            <input
+              className="input"
+              value={editForm.unit}
+              onChange={(event) => setEditForm((current) => ({ ...current, unit: event.target.value }))}
+              required
+            />
+          </label>
+
+          <div className="grid-two">
+            <label>
+              Mín. Masculino
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                value={editForm.ref_min_male}
+                onChange={(event) => setEditForm((current) => ({ ...current, ref_min_male: event.target.value }))}
+              />
+            </label>
+            <label>
+              Máx. Masculino
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                value={editForm.ref_max_male}
+                onChange={(event) => setEditForm((current) => ({ ...current, ref_max_male: event.target.value }))}
+              />
+            </label>
+            <label>
+              Mín. Feminino
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                value={editForm.ref_min_female}
+                onChange={(event) => setEditForm((current) => ({ ...current, ref_min_female: event.target.value }))}
+              />
+            </label>
+            <label>
+              Máx. Feminino
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                value={editForm.ref_max_female}
+                onChange={(event) => setEditForm((current) => ({ ...current, ref_max_female: event.target.value }))}
+              />
+            </label>
+          </div>
+
+          <div className="split-row" style={{ marginTop: "1rem" }}>
+            <button type="button" className="button button--outline" onClick={() => setEditingItem(null)}>
+              Cancelar
+            </button>
+            <button className="button button--primary" type="submit" disabled={updating}>
+              {updating ? "Salvando..." : "Atualizar"}
+            </button>
+          </div>
+        </form>
+      </Modal>
+    </div>
   );
 }
-
-
