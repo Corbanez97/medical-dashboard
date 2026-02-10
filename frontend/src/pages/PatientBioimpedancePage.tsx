@@ -128,7 +128,7 @@ export function PatientBioimpedancePage() {
           {loading ? (
             <p className="muted-text">Carregando histórico...</p>
           ) : (
-            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
+            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto", overflowX: "auto" }}>
               <table>
                 <thead>
                   <tr>

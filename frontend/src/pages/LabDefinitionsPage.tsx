@@ -143,7 +143,7 @@ export function LabDefinitionsPage() {
           {loading ? (
             <p className="muted-text">Carregando definições...</p>
           ) : (
-            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
+            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto", overflowX: "auto" }}>
               <table>
                 <thead>
                   <tr>
