@@ -115,163 +115,165 @@ export function PatientBioimpedancePage() {
   };
 
   return (
-    <section className="grid-two stack-gap">
-      <article className="page-card stack-gap">
-        <div className="split-row">
-          <h3>Histórico de Bioimpedância</h3>
-          <span className="muted-text">{entries.length} registros</span>
-        </div>
+    <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <section className="grid-two stack-gap">
+        <article className="page-card stack-gap">
+          <div className="split-row">
+            <h3>Histórico de Bioimpedância</h3>
+            <span className="muted-text">{entries.length} registros</span>
+          </div>
 
-        <NoticeBanner notice={notice} />
+          <NoticeBanner notice={notice} />
 
-        {loading ? (
-          <p className="muted-text">Carregando histórico...</p>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Peso</th>
-                  <th>IMC</th>
-                  <th>% Gordura</th>
-                  <th>Massa Muscular</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sorted.length === 0 ? (
+          {loading ? (
+            <p className="muted-text">Carregando histórico...</p>
+          ) : (
+            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={5} className="empty-cell">
-                      Sem dados de bioimpedância ainda.
-                    </td>
+                    <th>Data</th>
+                    <th>Peso</th>
+                    <th>IMC</th>
+                    <th>% Gordura</th>
+                    <th>Massa Muscular</th>
                   </tr>
-                ) : (
-                  sorted.map((entry) => (
-                    <tr key={entry.id}>
-                      <td>{formatDate(entry.date)}</td>
-                      <td>{formatDecimal(entry.weight_kg)} kg</td>
-                      <td>{formatDecimal(entry.bmi)}</td>
-                      <td>{formatDecimal(entry.body_fat_percent)}</td>
-                      <td>{formatDecimal(entry.muscle_mass_kg)} kg</td>
+                </thead>
+                <tbody>
+                  {sorted.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="empty-cell">
+                        Sem dados de bioimpedância ainda.
+                      </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </article>
+                  ) : (
+                    sorted.map((entry) => (
+                      <tr key={entry.id}>
+                        <td>{formatDate(entry.date)}</td>
+                        <td>{formatDecimal(entry.weight_kg)} kg</td>
+                        <td>{formatDecimal(entry.bmi)}</td>
+                        <td>{formatDecimal(entry.body_fat_percent)}</td>
+                        <td>{formatDecimal(entry.muscle_mass_kg)} kg</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </article>
 
-      <article className="page-card stack-gap">
-        <h3>Adicionar registro de bioimpedância</h3>
-        <form className="form-grid" onSubmit={onSubmit}>
-          <label>
-            Data
-            <input
-              className="input"
-              type="date"
-              value={form.date}
-              onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))}
-              required
-            />
-          </label>
+        <article className="page-card stack-gap">
+          <h3>Adicionar registro de bioimpedância</h3>
+          <form className="form-grid" onSubmit={onSubmit}>
+            <label>
+              Data
+              <input
+                className="input"
+                type="date"
+                value={form.date}
+                onChange={(event) => setForm((current) => ({ ...current, date: event.target.value }))}
+                required
+              />
+            </label>
 
-          <div className="grid-two">
-            <label>
-              Peso (kg)
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.weight_kg}
-                onChange={(event) => setForm((current) => ({ ...current, weight_kg: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              IMC
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.bmi}
-                onChange={(event) => setForm((current) => ({ ...current, bmi: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              Gordura Corporal (%)
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.body_fat_percent}
-                onChange={(event) => setForm((current) => ({ ...current, body_fat_percent: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              Massa Gorda (kg)
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.fat_mass_kg}
-                onChange={(event) => setForm((current) => ({ ...current, fat_mass_kg: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              Massa Muscular (kg)
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.muscle_mass_kg}
-                onChange={(event) => setForm((current) => ({ ...current, muscle_mass_kg: event.target.value }))}
-                required
-              />
-            </label>
-            <label>
-              Gordura Visceral
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.visceral_fat_level}
-                onChange={(event) => setForm((current) => ({ ...current, visceral_fat_level: event.target.value }))}
-              />
-            </label>
-            <label>
-              TMB (kcal)
-              <input
-                className="input"
-                type="number"
-                step="1"
-                value={form.basal_metabolic_rate_kcal}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, basal_metabolic_rate_kcal: event.target.value }))
-                }
-              />
-            </label>
-            <label>
-              Hidratação (%)
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.hydration_percent}
-                onChange={(event) => setForm((current) => ({ ...current, hydration_percent: event.target.value }))}
-              />
-            </label>
-          </div>
+            <div className="grid-two">
+              <label>
+                Peso (kg)
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.weight_kg}
+                  onChange={(event) => setForm((current) => ({ ...current, weight_kg: event.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                IMC
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.bmi}
+                  onChange={(event) => setForm((current) => ({ ...current, bmi: event.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                Gordura Corporal (%)
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.body_fat_percent}
+                  onChange={(event) => setForm((current) => ({ ...current, body_fat_percent: event.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                Massa Gorda (kg)
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.fat_mass_kg}
+                  onChange={(event) => setForm((current) => ({ ...current, fat_mass_kg: event.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                Massa Muscular (kg)
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.muscle_mass_kg}
+                  onChange={(event) => setForm((current) => ({ ...current, muscle_mass_kg: event.target.value }))}
+                  required
+                />
+              </label>
+              <label>
+                Gordura Visceral
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.visceral_fat_level}
+                  onChange={(event) => setForm((current) => ({ ...current, visceral_fat_level: event.target.value }))}
+                />
+              </label>
+              <label>
+                TMB (kcal)
+                <input
+                  className="input"
+                  type="number"
+                  step="1"
+                  value={form.basal_metabolic_rate_kcal}
+                  onChange={(event) =>
+                    setForm((current) => ({ ...current, basal_metabolic_rate_kcal: event.target.value }))
+                  }
+                />
+              </label>
+              <label>
+                Hidratação (%)
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.hydration_percent}
+                  onChange={(event) => setForm((current) => ({ ...current, hydration_percent: event.target.value }))}
+                />
+              </label>
+            </div>
 
-          <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Salvando..." : "Salvar Bioimpedância"}
-          </button>
-        </form>
-      </article>
-    </section>
+            <button className="button button--primary" type="submit" disabled={saving}>
+              {saving ? "Salvando..." : "Salvar Bioimpedância"}
+            </button>
+          </form>
+        </article>
+      </section>
+    </div>
   );
 }
 

@@ -130,152 +130,154 @@ export function LabDefinitionsPage() {
   };
 
   return (
-    <section className="grid-two stack-gap">
-      <article className="page-card stack-gap">
-        <div className="split-row">
-          <h2>Definições de Exames</h2>
-          <span className="muted-text">{definitions.length} itens</span>
-        </div>
+    <div className="stack-gap" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <section className="grid-two stack-gap">
+        <article className="page-card stack-gap">
+          <div className="split-row">
+            <h2>Definições de Exames</h2>
+            <span className="muted-text">{definitions.length} itens</span>
+          </div>
 
-        <NoticeBanner notice={notice} />
+          <NoticeBanner notice={notice} />
 
-        {loading ? (
-          <p className="muted-text">Carregando definições...</p>
-        ) : (
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Categoria</th>
-                  <th>Unidade</th>
-                  <th>Ref. Masculino</th>
-                  <th>Ref. Feminino</th>
-                  <th>Ação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {definitions.length === 0 ? (
+          {loading ? (
+            <p className="muted-text">Carregando definições...</p>
+          ) : (
+            <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
+              <table>
+                <thead>
                   <tr>
-                    <td colSpan={6} className="empty-cell">
-                      Nenhuma definição ainda.
-                    </td>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Unidade</th>
+                    <th>Ref. Masculino</th>
+                    <th>Ref. Feminino</th>
+                    <th>Ação</th>
                   </tr>
-                ) : (
-                  definitions.map((definition) => (
-                    <tr key={definition.id}>
-                      <td>{definition.name}</td>
-                      <td>{definition.category}</td>
-                      <td>{definition.unit}</td>
-                      <td>
-                        {definition.ref_min_male ?? "-"} a {definition.ref_max_male ?? "-"}
-                      </td>
-                      <td>
-                        {definition.ref_min_female ?? "-"} a {definition.ref_max_female ?? "-"}
-                      </td>
-                      <td>
-                        <button
-                          className="button button--outline"
-                          style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
-                          onClick={() => startEdit(definition)}
-                        >
-                          Editar
-                        </button>
+                </thead>
+                <tbody>
+                  {definitions.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="empty-cell">
+                        Nenhuma definição ainda.
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </article>
-
-      <article className="page-card stack-gap">
-        <div className="split-row">
-          <h2>{editingId ? "Editar Definição" : "Criar Definição"}</h2>
-          {editingId && (
-            <button className="button button--outline" onClick={cancelEdit}>Cancelar Edição</button>
+                  ) : (
+                    definitions.map((definition) => (
+                      <tr key={definition.id}>
+                        <td>{definition.name}</td>
+                        <td>{definition.category}</td>
+                        <td>{definition.unit}</td>
+                        <td>
+                          {definition.ref_min_male ?? "-"} a {definition.ref_max_male ?? "-"}
+                        </td>
+                        <td>
+                          {definition.ref_min_female ?? "-"} a {definition.ref_max_female ?? "-"}
+                        </td>
+                        <td>
+                          <button
+                            className="button button--outline"
+                            style={{ padding: "0.25rem 0.75rem", fontSize: "0.8rem" }}
+                            onClick={() => startEdit(definition)}
+                          >
+                            Editar
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
-        </div>
-        <form className="form-grid" onSubmit={onSubmit}>
-          <label>
-            Nome do Exame
-            <input
-              className="input"
-              value={form.name}
-              onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
-              required
-            />
-          </label>
-          <label>
-            Categoria
-            <input
-              className="input"
-              value={form.category}
-              onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
-              required
-            />
-          </label>
-          <label>
-            Unidade
-            <input
-              className="input"
-              value={form.unit}
-              onChange={(event) => setForm((current) => ({ ...current, unit: event.target.value }))}
-              required
-            />
-          </label>
+        </article>
 
-          <div className="grid-two">
-            <label>
-              Mín. Masculino
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.ref_min_male}
-                onChange={(event) => setForm((current) => ({ ...current, ref_min_male: event.target.value }))}
-              />
-            </label>
-            <label>
-              Máx. Masculino
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.ref_max_male}
-                onChange={(event) => setForm((current) => ({ ...current, ref_max_male: event.target.value }))}
-              />
-            </label>
-            <label>
-              Mín. Feminino
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.ref_min_female}
-                onChange={(event) => setForm((current) => ({ ...current, ref_min_female: event.target.value }))}
-              />
-            </label>
-            <label>
-              Máx. Feminino
-              <input
-                className="input"
-                type="number"
-                step="0.01"
-                value={form.ref_max_female}
-                onChange={(event) => setForm((current) => ({ ...current, ref_max_female: event.target.value }))}
-              />
-            </label>
+        <article className="page-card stack-gap">
+          <div className="split-row">
+            <h2>{editingId ? "Editar Definição" : "Criar Definição"}</h2>
+            {editingId && (
+              <button className="button button--outline" onClick={cancelEdit}>Cancelar Edição</button>
+            )}
           </div>
+          <form className="form-grid" onSubmit={onSubmit}>
+            <label>
+              Nome do Exame
+              <input
+                className="input"
+                value={form.name}
+                onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Categoria
+              <input
+                className="input"
+                value={form.category}
+                onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))}
+                required
+              />
+            </label>
+            <label>
+              Unidade
+              <input
+                className="input"
+                value={form.unit}
+                onChange={(event) => setForm((current) => ({ ...current, unit: event.target.value }))}
+                required
+              />
+            </label>
 
-          <button className="button button--primary" type="submit" disabled={saving}>
-            {saving ? "Salvando..." : (editingId ? "Atualizar Definição" : "Criar Definição")}
-          </button>
-        </form>
-      </article>
-    </section>
+            <div className="grid-two">
+              <label>
+                Mín. Masculino
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.ref_min_male}
+                  onChange={(event) => setForm((current) => ({ ...current, ref_min_male: event.target.value }))}
+                />
+              </label>
+              <label>
+                Máx. Masculino
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.ref_max_male}
+                  onChange={(event) => setForm((current) => ({ ...current, ref_max_male: event.target.value }))}
+                />
+              </label>
+              <label>
+                Mín. Feminino
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.ref_min_female}
+                  onChange={(event) => setForm((current) => ({ ...current, ref_min_female: event.target.value }))}
+                />
+              </label>
+              <label>
+                Máx. Feminino
+                <input
+                  className="input"
+                  type="number"
+                  step="0.01"
+                  value={form.ref_max_female}
+                  onChange={(event) => setForm((current) => ({ ...current, ref_max_female: event.target.value }))}
+                />
+              </label>
+            </div>
+
+            <button className="button button--primary" type="submit" disabled={saving}>
+              {saving ? "Salvando..." : (editingId ? "Atualizar Definição" : "Criar Definição")}
+            </button>
+          </form>
+        </article>
+      </section>
+    </div>
   );
 }
 

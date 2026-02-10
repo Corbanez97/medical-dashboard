@@ -120,7 +120,7 @@ export function PatientSubjectivePage() {
         {loading ? (
           <p className="muted-text">Carregando histórico...</p>
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
             <table>
               <thead>
                 <tr>

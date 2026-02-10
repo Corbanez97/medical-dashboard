@@ -123,7 +123,7 @@ export function PatientLabsPage() {
     <section className="grid-two stack-gap">
       <article className="page-card stack-gap">
         <div className="split-row">
-          <h3>Resultados de Exames</h3>
+          <h3>Exames</h3>
           <span className="muted-text">{results.length} registros</span>
         </div>
 
@@ -132,7 +132,7 @@ export function PatientLabsPage() {
         {loading ? (
           <p className="muted-text">Carregando resultados...</p>
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap" style={{ maxHeight: "400px", overflowY: "auto" }}>
             <table>
               <thead>
                 <tr>

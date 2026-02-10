@@ -75,7 +75,7 @@ export function LabAlerts({ results, definitions, patient }: Props) {
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <h4 style={{ color: "var(--danger)" }}>Resultados de Exames Anormais ({alerts.length})</h4>
+                    <h4 style={{ color: "var(--danger)" }}>Exames Anormais ({alerts.length})</h4>
                 </div>
 
                 <div className="table-wrap">
@@ -133,7 +133,7 @@ export function LabAlerts({ results, definitions, patient }: Props) {
             <Modal
                 isOpen={showAllAlerts}
                 onClose={() => setShowAllAlerts(false)}
-                title="Resultados de Exames Anormais"
+                title="Exames Anormais"
             >
                 <div className="table-wrap" style={{ maxHeight: "60vh", overflowY: "auto" }}>
                     <table style={{ background: "transparent" }}>
