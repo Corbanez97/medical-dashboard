@@ -139,7 +139,7 @@ export function PatientLabsPage() {
                   <th>Data</th>
                   <th>Exame</th>
                   <th>Valor</th>
-                  <th>Alerta</th>
+                  {/* <th>Alerta</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -157,7 +157,7 @@ export function PatientLabsPage() {
                       <td>
                         {item.value} {definitionMap.get(item.test_definition_id)?.unit ?? ""}
                       </td>
-                      <td>{item.flag ?? "-"}</td>
+                      {/* <td>{item.flag ?? "-"}</td> */}
                     </tr>
                   ))
                 )}

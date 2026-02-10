@@ -14,13 +14,30 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
     return createPortal(
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="split-row" style={{ marginBottom: "1.5rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                     <h2>{title}</h2>
                     <button
                         type="button"
-                        className="button button--outline"
-                        style={{ padding: "0.25rem 0.5rem", minWidth: "32px" }}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "1.5rem",
+                            lineHeight: "1",
+                            cursor: "pointer",
+                            color: "var(--text-secondary)",
+                            padding: "0.25rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: "32px",
+                            height: "32px",
+                            borderRadius: "50%",
+                            transition: "background-color 0.2s"
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "rgba(0,0,0,0.05)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
                         onClick={onClose}
+                        aria-label="Close"
                     >
                         &times;
                     </button>

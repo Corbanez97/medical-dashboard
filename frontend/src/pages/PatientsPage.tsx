@@ -215,7 +215,7 @@ export function PatientsPage() {
                         <td>{patient.gender}</td>
                         <td>{patient.height_cm} cm</td>
                         <td style={{ textAlign: "right" }}>
-                          <div className="button-row" style={{ justifyContent: "flex-end" }}>
+                          <div className="button-row" style={{ justifyContent: "flex-end", display: "flex", gap: "0.5rem" }}>
                             <button
                               type="button"
                               className="button button--outline"
