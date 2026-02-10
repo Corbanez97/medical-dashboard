@@ -34,9 +34,13 @@ async function request<T>(
   if (!response.ok) {
     let detail = response.statusText;
     try {
-      const errorJson = (await response.json()) as { detail?: string };
+      const errorJson = (await response.json()) as { detail?: any };
       if (errorJson.detail) {
-        detail = errorJson.detail;
+        if (typeof errorJson.detail === "string") {
+          detail = errorJson.detail;
+        } else {
+          detail = JSON.stringify(errorJson.detail);
+        }
       }
     } catch {
       // noop: falls back to status text
