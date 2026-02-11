@@ -9,7 +9,7 @@
             "destination": "/brand/:path*"
         },
         {
-            "source": "/(.*)",
+            "source": "/((?!api|brand|assets|favicon.ico).*)",
             "destination": "/index.html"
         }
     ],
