@@ -10,7 +10,7 @@
         },
         {
             "source": "/((?!api|brand|assets|favicon.ico).*)",
-            "destination": "/index.html"
+            "destination": "/"
         }
     ],
     "cleanUrls": true
