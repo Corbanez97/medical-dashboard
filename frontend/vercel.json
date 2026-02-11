@@ -9,7 +9,7 @@
             "destination": "/brand/:path*"
         },
         {
-            "source": "/((?!api|brand).*)",
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ],
