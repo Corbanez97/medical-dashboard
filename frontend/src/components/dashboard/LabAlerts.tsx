@@ -3,6 +3,8 @@ import { formatDate } from "../../helpers";
 import type { LabResult, LabTestDefinition, Patient } from "../../types";
 import { Modal } from "../common/Modal";
 
+import { AlertCircle } from "lucide-react";
+
 type Props = {
     results: LabResult[];
     definitions: LabTestDefinition[];
@@ -61,20 +63,7 @@ export function LabAlerts({ results, definitions, patient }: Props) {
         <>
             <div className="page-card stack-gap-sm" style={{ borderColor: "var(--danger-border)", backgroundColor: "#fff5f5" }}>
                 <div className="row-gap" style={{ color: "var(--danger)" }}>
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                    >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
+                    <AlertCircle size={24} />
                     <h4 style={{ color: "var(--danger)" }}>Exames Anormais ({alerts.length})</h4>
                 </div>
 

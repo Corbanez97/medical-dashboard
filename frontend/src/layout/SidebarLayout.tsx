@@ -1,5 +1,13 @@
 import { type ReactNode, useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+    Menu,
+    ChevronLeft,
+    ChevronRight,
+    Users,
+    Activity,
+    BookOpen
+} from "lucide-react";
 
 import logo from "../assets/logo.svg";
 
@@ -31,11 +39,7 @@ export function SidebarLayout({ children }: Props) {
                     onClick={() => setIsMobileOpen(true)}
                     aria-label="Open Menu"
                 >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <line x1="3" y1="12" x2="21" y2="12"></line>
-                        <line x1="3" y1="6" x2="21" y2="6"></line>
-                        <line x1="3" y1="18" x2="21" y2="18"></line>
-                    </svg>
+                    <Menu size={24} />
                 </button>
                 {/* <div className="mobile-logo">INSTITUTO TATSCH</div> */}
                 <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -71,17 +75,7 @@ export function SidebarLayout({ children }: Props) {
                         onClick={() => setIsCollapsed(!isCollapsed)}
                         title={isCollapsed ? "Expandir menu" : "Recolher menu"}
                     >
-                        {isCollapsed ? (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="13 17 18 12 13 7"></polyline>
-                                <polyline points="6 17 11 12 6 7"></polyline>
-                            </svg>
-                        ) : (
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="11 17 6 12 11 7"></polyline>
-                                <polyline points="18 17 13 12 18 7"></polyline>
-                            </svg>
-                        )}
+                        {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
                     </button>
                     {/* Close button for mobile */}
                     <button
@@ -98,49 +92,31 @@ export function SidebarLayout({ children }: Props) {
                         title={isCollapsed ? "Pacientes" : ""}
                         onClick={handleNavClick}
                     >
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
+                        <Users size={24} />
                         {!isCollapsed && "Pacientes"}
                     </NavLink>
 
                     <NavLink
                         to="/lab-definitions"
                         className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-                        title={isCollapsed ? "Definições de Exames" : ""}
+                        title={isCollapsed ? "Definições" : ""}
                         onClick={handleNavClick}
                     >
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                        </svg>
-                        {!isCollapsed && "Definições de Exames"}
+                        <Activity size={24} />
+                        {!isCollapsed && "Definições"}
                     </NavLink>
+
+                    <a
+                        href="/brand/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="nav-item"
+                        title={isCollapsed ? "Brand Book" : ""}
+                        onClick={handleNavClick}
+                    >
+                        <BookOpen size={24} />
+                        {!isCollapsed && "Brand Book"}
+                    </a>
                 </nav>
             </aside>
 
