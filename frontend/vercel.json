@@ -3,6 +3,15 @@
         {
             "source": "/api/:match*",
             "destination": "https://medical-dashboard-backend.vercel.app/:match*"
+        },
+        {
+            "source": "/brand/:path*",
+            "destination": "/brand/:path*"
+        },
+        {
+            "source": "/((?!api|brand).*)",
+            "destination": "/index.html"
         }
-    ]
+    ],
+    "cleanUrls": true
 }
