@@ -1,13 +1,19 @@
+import boto3
+from botocore.exceptions import ClientError
+from datetime import datetime
+
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import selectinload
 from typing import List
 
+from config import settings
 from database import get_db, engine
 from models import (
     Base, Patient, LabTestDefinition, LabResult, 
-    BioimpedanceEntry, AnthropometryEntry, SubjectiveEntry
+    BioimpedanceEntry, AnthropometryEntry, SubjectiveEntry, ExamUpload, ExtractedLabResult
 )
 from schemas import (
     PatientCreate, PatientUpdate, Patient as PatientSchema,
@@ -15,7 +21,9 @@ from schemas import (
     LabResultCreate, LabResultUpdate, LabResult as LabResultSchema,
     BioimpedanceEntryCreate, BioimpedanceEntryUpdate, BioimpedanceEntry as BioimpedanceEntrySchema,
     AnthropometryEntryCreate, AnthropometryEntryUpdate, AnthropometryEntry as AnthropometryEntrySchema,
-    SubjectiveEntryCreate, SubjectiveEntryUpdate, SubjectiveEntry as SubjectiveEntrySchema
+    SubjectiveEntryCreate, SubjectiveEntryUpdate, SubjectiveEntry as SubjectiveEntrySchema,
+    ExamUploadCreate, ExamUpload as ExamUploadSchema,
+    ExtractedLabResult as ExtractedLabResultSchema, ExtractedLabResultUpdate
 )
 
 app = FastAPI(title="Medical Dashboard API")
@@ -302,3 +310,130 @@ async def delete_subjective_entry(entry_id: int, db: AsyncSession = Depends(get_
         raise HTTPException(status_code=404, detail="Subjective Entry not found")
     await db.delete(db_entry)
     await db.commit()
+
+# --- Exam Uploads ---
+
+@app.post("/patients/{patient_id}/exams/upload-url", status_code=status.HTTP_201_CREATED)
+async def generate_upload_url(
+    patient_id: int, 
+    filename: str, 
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify patient exists
+    db_patient = await db.get(Patient, patient_id)
+    if not db_patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+    # 1. Create a DB record to track this upload (Traceability Start)
+    # We use a timestamp to avoid overwriting files with same name
+    file_key = f"patients/{patient_id}/{int(datetime.now().timestamp())}_{filename}"
+    
+    new_upload = ExamUpload(
+        patient_id=patient_id,
+        filename=filename,
+        s3_key=file_key,
+        status="pending_upload"
+    )
+    db.add(new_upload)
+    await db.commit()
+    await db.refresh(new_upload)
+    
+    # 2. Generate Presigned URL
+    s3_client = boto3.client(
+        's3', 
+        region_name=settings.AWS_REGION,
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+    )
+
+    try:
+        presigned_url = s3_client.generate_presigned_url(
+            'put_object',
+            Params={
+                'Bucket': settings.OCR_BUCKET, 
+                'Key': file_key, 
+                'ContentType': 'application/pdf'
+            },
+            ExpiresIn=3600
+        )
+    except ClientError as e:
+        # In a real app, log the error
+        print(f"Error generating presigned URL: {e}")
+        raise HTTPException(status_code=500, detail="Could not generate upload URL")
+
+    return {"upload_url": presigned_url, "exam_upload_id": new_upload.id}
+
+@app.get("/exam-uploads/{upload_id}", response_model=ExamUploadSchema)
+async def read_exam_upload_status(upload_id: int, db: AsyncSession = Depends(get_db)):
+    db_upload = await db.get(ExamUpload, upload_id)
+    if db_upload is None:
+        raise HTTPException(status_code=404, detail="Exam Upload not found")
+    return db_upload
+
+@app.get("/exam-uploads/{upload_id}/results", response_model=List[ExtractedLabResultSchema])
+async def read_exam_upload_results(upload_id: int, db: AsyncSession = Depends(get_db)):
+    # Verify upload exists
+    db_upload = await db.get(ExamUpload, upload_id)
+    if db_upload is None:
+        raise HTTPException(status_code=404, detail="Exam Upload not found")
+        
+    result = await db.execute(
+        select(ExtractedLabResult)
+        .where(ExtractedLabResult.exam_upload_id == upload_id)
+        .options(selectinload(ExtractedLabResult.matched_definition)) 
+    )
+    return result.scalars().all()
+
+@app.put("/extracted-results/{result_id}", response_model=ExtractedLabResultSchema)
+async def update_extracted_result(result_id: int, result: ExtractedLabResultUpdate, db: AsyncSession = Depends(get_db)):
+    db_result = await db.get(ExtractedLabResult, result_id)
+    if db_result is None:
+        raise HTTPException(status_code=404, detail="Extracted Result not found")
+    
+    update_data = result.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_result, key, value)
+    
+    await db.commit()
+    await db.refresh(db_result)
+    return db_result
+
+@app.post("/exam-uploads/{upload_id}/approve", status_code=status.HTTP_200_OK)
+async def approve_exam_upload(upload_id: int, db: AsyncSession = Depends(get_db)):
+    """
+    Commit the 'ExtractedLabResult' items to the permanent 'LabResult' table.
+    """
+    # 1. Get the upload
+    db_upload = await db.get(ExamUpload, upload_id)
+    if not db_upload:
+        raise HTTPException(status_code=404, detail="Exam Upload not found")
+        
+    if db_upload.status != "ready":
+        raise HTTPException(status_code=400, detail="Exam processing is not ready yet")
+
+    # 2. Get all extracted results
+    result_query = await db.execute(select(ExtractedLabResult).where(ExtractedLabResult.exam_upload_id == upload_id))
+    extracted_results = result_query.scalars().all()
+    
+    # 3. Migrate to LabResult
+    # TODO: In a real app, you might want to filter out ones with no matched_definition_id
+    # or handle them as 'unknown' tests. For now, we skip them.
+    
+    count_created = 0
+    for item in extracted_results:
+        if item.matched_test_definition_id:
+            new_lab_result = LabResult(
+                patient_id=db_upload.patient_id,
+                test_definition_id=item.matched_test_definition_id,
+                collection_date=db_upload.created_at.date(), # Approximate date
+                value=item.value,
+                flag=None # You could recalculate flag here based on ref ranges
+            )
+            db.add(new_lab_result)
+            count_created += 1
+            
+    # 4. Mark upload as 'approved'
+    db_upload.status = "approved"
+    
+    await db.commit()
+    return {"message": "Results approved and saved", "count": count_created}

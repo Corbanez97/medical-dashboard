@@ -22,6 +22,7 @@ class Patient(Base):
     lab_results: Mapped[List["LabResult"]] = relationship(back_populates="patient")
     anthropometry_entries: Mapped[List["AnthropometryEntry"]] = relationship(back_populates="patient")
     subjective_entries: Mapped[List["SubjectiveEntry"]] = relationship(back_populates="patient")
+    exam_uploads: Mapped[List["ExamUpload"]] = relationship(back_populates="patient")
 
 class LabTestDefinition(Base):
     """
@@ -118,3 +119,47 @@ class SubjectiveEntry(Base):
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     patient: Mapped["Patient"] = relationship(back_populates="subjective_entries")
+
+class ExamUpload(Base):
+    """
+    Tracks the file upload and processing status (Traceability).
+    """
+    __tablename__ = "exam_uploads"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    patient_id: Mapped[int] = mapped_column(ForeignKey("patients.id"))
+    
+    filename: Mapped[str] = mapped_column(String(255))
+    s3_key: Mapped[str] = mapped_column(String(512))
+    status: Mapped[str] = mapped_column(String(20), default="uploading") # uploading, processing, ready, failed
+    
+    # Traceability Metrics
+    pages_processed: Mapped[int] = mapped_column(Integer, default=0)
+    tokens_used: Mapped[int] = mapped_column(Integer, default=0) # LLM Cost tracking
+    
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    patient: Mapped["Patient"] = relationship(back_populates="exam_uploads")
+    extracted_results: Mapped[List["ExtractedLabResult"]] = relationship(back_populates="exam_upload")
+
+class ExtractedLabResult(Base):
+    """
+    Staging area. Results wait here until the user clicks "Approve".
+    """
+    __tablename__ = "extracted_lab_results"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    exam_upload_id: Mapped[int] = mapped_column(ForeignKey("exam_uploads.id"))
+    
+    # The raw text found in the PDF
+    raw_test_name: Mapped[str] = mapped_column(String(200))
+    
+    # The suggested match from your LabTestDefinitions
+    matched_test_definition_id: Mapped[Optional[int]] = mapped_column(ForeignKey("lab_test_definitions.id"), nullable=True)
+    
+    value: Mapped[float] = mapped_column(Float)
+    unit: Mapped[str] = mapped_column(String(50))
+    confidence_score: Mapped[float] = mapped_column(Float) # How confident is the LLM?
+
+    exam_upload: Mapped["ExamUpload"] = relationship(back_populates="extracted_results")
+    matched_definition: Mapped["LabTestDefinition"] = relationship()

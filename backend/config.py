@@ -8,6 +8,12 @@ class Settings(BaseSettings):
     # SECRET_KEY: str 
     LOG_LEVEL: str = "INFO"
 
+    # AWS / OCR Settings
+    OCR_BUCKET: str | None = None
+    AWS_ACCESS_KEY_ID: str | None = None
+    AWS_SECRET_ACCESS_KEY: str | None = None
+    AWS_REGION: str = "us-east-1"
+
     model_config = SettingsConfigDict(env_file=".env")
 
     @field_validator("DATABASE_URL")

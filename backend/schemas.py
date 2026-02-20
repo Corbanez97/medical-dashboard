@@ -164,3 +164,52 @@ class SubjectiveEntry(SubjectiveEntryBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+# --- ExamUpload Schemas ---
+class ExamUploadBase(BaseModel):
+    patient_id: int
+    filename: str
+    status: str = "uploading"
+
+class ExamUploadCreate(ExamUploadBase):
+    s3_key: str
+    
+class ExamUploadUpdate(BaseModel):
+    status: Optional[str] = None
+    pages_processed: Optional[int] = None
+    tokens_used: Optional[int] = None
+
+class ExamUpload(ExamUploadBase):
+    id: int
+    s3_key: str
+    pages_processed: int
+    tokens_used: int
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+# --- ExtractedLabResult Schemas ---
+class ExtractedLabResultBase(BaseModel):
+    exam_upload_id: int
+    raw_test_name: str
+    matched_test_definition_id: Optional[int] = None
+    value: float
+    unit: str
+    confidence_score: float
+
+class ExtractedLabResultCreate(ExtractedLabResultBase):
+    pass
+
+class ExtractedLabResultUpdate(BaseModel):
+    raw_test_name: Optional[str] = None
+    matched_test_definition_id: Optional[int] = None
+    value: Optional[float] = None
+    unit: Optional[str] = None
+    confidence_score: Optional[float] = None
+
+class ExtractedLabResult(ExtractedLabResultBase):
+    id: int
+    
+    # matched_definition: Optional[LabTestDefinition] = None 
+    
+    model_config = ConfigDict(from_attributes=True)

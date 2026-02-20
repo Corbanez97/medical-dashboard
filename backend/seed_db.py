@@ -5,7 +5,7 @@ from faker import Faker
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from models import Base, Patient, LabTestDefinition, LabResult, BioimpedanceEntry, SubjectiveEntry, AnthropometryEntry
+from models import Base, Patient, LabTestDefinition, LabResult, BioimpedanceEntry, SubjectiveEntry, AnthropometryEntry, ExamUpload, ExtractedLabResult
 from config import settings
 
 # 1. SETUP ASYNC ENGINE
@@ -56,7 +56,7 @@ async def seed_matrix(session: AsyncSession):
         session.add(new_test)
     await session.commit()
 
-async def generate_patients(session: AsyncSession, count=20):
+async def generate_patients(session: AsyncSession, count=10):
     print(f"Generating {count} patients with history...")
     result = await session.execute(select(LabTestDefinition))
     lab_defs = result.scalars().all()
@@ -160,6 +160,7 @@ async def main():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
+        print("Created tables: Patient, LabTestDefinition, LabResult, BioimpedanceEntry, AnthropometryEntry, SubjectiveEntry, ExamUpload (empty), ExtractedLabResult (empty)")
     
     # 3. RUN SEED
     async with async_session_factory() as session:
